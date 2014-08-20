@@ -476,7 +476,7 @@ namespace evd{
 	  y = ep2d[iep]->WireID().Wire;
 	}
 
-	TMarker& strt = view->AddMarker(x, y, color, 29, 2.0);
+	TMarker& strt = view->AddMarker(x, y, color, 30, 2.0);
 	strt.SetMarkerColor(color);
 	
       } // loop on iep end points
@@ -1179,40 +1179,31 @@ namespace evd{
     art::ServiceHandle<evd::RawDrawingOptions>   rawOpt;
     art::ServiceHandle<evd::RecoDrawingOptions>  recoOpt;
     art::ServiceHandle<geo::Geometry>            geo;
+    art::ServiceHandle<util::DetectorProperties> detprop;
 
     if(rawOpt->fDrawRawDataOrCalibWires < 1) return;
-
-    if(recoOpt->fDrawVertices != 0){
-
-      geo::View_t gview = geo->TPC(rawOpt->fTPC).Plane(plane).View();
+    
+    if(recoOpt->fDrawVertices == 0) return;
       
-      for(size_t imod = 0; imod < recoOpt->fVertexLabels.size(); ++imod) {
-	std::string const which = recoOpt->fVertexLabels[imod];
-	
-	art::PtrVector<recob::Vertex> vertex;
-	this->GetVertices(evt, which, vertex);
+    for(size_t imod = 0; imod < recoOpt->fVertexLabels.size(); ++imod) {
+      std::string const which = recoOpt->fVertexLabels[imod];
 
-	if(vertex.size() < 1) continue;
+      art::PtrVector<recob::Vertex> vertex;
+      this->GetVertices(evt, which, vertex);
 
-	art::FindMany<recob::Hit> fmh(vertex, evt, which);
-	
-	for(size_t v = 0; v < vertex.size(); ++v){
-	  
-	  std::vector<const recob::Hit*> hits;
+      if(vertex.size() < 1) continue;
 
-	  hits = fmh.at(v);
-	  
-	  // only get the hits for the current view
-	  std::vector<const recob::Hit*>::iterator itr = hits.begin(); 
-	  while(itr < hits.end()){
-	    if((*itr)->View() != gview) hits.erase(itr);
-	    else itr++;
-	  }
-	  
-	  this->Hit2D(hits, evd::kColor[vertex[v]->ID()%evd::kNCOLS], view);
-	} // end loop over vertices to draw from this label
-      } // end loop over vertex module lables
-    } // end if we are drawing vertices
+      for(size_t v = 0; v < vertex.size(); ++v){
+        // BB: draw polymarker at the vertex position in this plane
+        double xyz[3];
+        vertex[v]->XYZ(xyz);
+        double wire = geo->NearestWire(xyz, plane, 0, 0);
+        double time = detprop->ConvertXToTicks(xyz[0], plane, 0, 0);
+        int color  = evd::kColor[vertex[v]->ID()%evd::kNCOLS];
+        TMarker& strt = view->AddMarker(wire, time, color, 24, 1.0);
+        strt.SetMarkerColor(color);
+      } // end loop over vertices to draw from this label
+    } // end loop over vertex module lables
     
     return;
   }
