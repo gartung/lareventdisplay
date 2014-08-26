@@ -146,7 +146,7 @@ namespace evd{
       
       for(size_t i = 0; i < wires.size(); ++i) {
       
-	uint32_t channel = wires[i]->RawDigit()->Channel();
+	uint32_t channel = wires[i]->Channel();
 	std::vector<geo::WireID> wireids = geo->ChannelToWire(channel);
 
 	// check plane and tpc are correct
@@ -2281,7 +2281,7 @@ namespace evd{
 
       for (size_t i = 0; i < wires.size(); ++i) {
 
-	std::vector<geo::WireID> wireids = geo->ChannelToWire(wires[i]->RawDigit()->Channel());
+	std::vector<geo::WireID> wireids = geo->ChannelToWire(wires[i]->Channel());
 
 	bool goodWID = false;
 	for( auto const& wid : wireids ){

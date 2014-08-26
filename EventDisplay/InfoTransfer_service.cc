@@ -214,12 +214,7 @@ namespace evd {
     if(fRefStartHit[plane]){
       starthitout[plane][1] = fRefStartHit[plane]->PeakTime() ;  
       try{
-	if(fRefStartHit[plane]->Wire().isNonnull()){
-	  starthitout[plane][0] = fRefStartHit[plane]->WireID().Wire;
-	}
-	else{
-	  starthitout[plane][0]=0;
-	}
+	starthitout[plane][0] = fRefStartHit[plane]->WireID().Wire;
       }
       catch(cet::exception e) {
 	mf::LogWarning("GraphCluster") << "caught exception \n"
@@ -236,12 +231,7 @@ namespace evd {
     if(fRefEndHit[plane]){
       endhitout[plane][1] = fRefEndHit[plane]->PeakTime() ;  
       try{
-	if(fRefEndHit[plane]->Wire().isNonnull()){
-	  endhitout[plane][0] = fRefEndHit[plane]->WireID().Wire;
-	}
-	else{
-	  endhitout[plane][0]=0;
-	}
+	endhitout[plane][0] = fRefEndHit[plane]->WireID().Wire;
       }
       catch(cet::exception e) {
 	mf::LogWarning("GraphCluster") << "caught exception \n"
