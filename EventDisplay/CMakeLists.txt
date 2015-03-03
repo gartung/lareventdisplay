@@ -1,3 +1,6 @@
+IF(ALT_CMAKE)
+INCLUDE(altCMakeLists.cmake)
+ELSE()
 
 include(CetRootCint)
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
@@ -225,3 +228,4 @@ simple_plugin ( SimulationDrawingOptions service
 install_headers()
 install_fhicl()
 install_source()
+ENDIF()

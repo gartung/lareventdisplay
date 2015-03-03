@@ -1,3 +1,6 @@
+IF(ALT_CMAKE)
+INCLUDE(altCMakeLists.cmake)
+ELSE()
 # ======================================================================
 #  lareventdisplay main build file
 #
@@ -64,3 +67,4 @@ add_subdirectory(ups)
 
 # packaging utility
 include(UseCPack)
+ENDIF()
