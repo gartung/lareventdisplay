@@ -93,6 +93,9 @@ namespace evd {
     void        ForceRedraw(); ///< Forces a redraw of the window
     void        SetUpZoomButtons();
     void 	SetUpClusterButtons();
+    void 	SetUpClusterButtons1();
+    void 	SetUpClusterButtons2();
+    void CycleClusterOptions();
     void        SetUpDrawingButtons();
     void        SetUpTPCselection();
     void 	SetUpPositionFind();
@@ -179,6 +182,11 @@ namespace evd {
     TGTextButton* fClearPPoints;       ///< Clear current list of End Points
     TGCheckButton* fToggleShowMarkers; ///< Toggle the ShowEndPointMarkersSetting
     TGTextView* fXYZPosition; ///< Display the xyz position
+    
+    TGTextButton* fCycleClusterDrawOptions; // Display and cycle through cluster drawing options
+    TGTextView* fClusterOptionInfo;
+//    static std::string ClusterOptionText();
+    void ClusterOptionText(std::vector<std::string>& cot);
     
     TGTextButton* fCalcAngle; ///<Calculate the 2D & 3D angles between lines
     TGTextButton* fClear; ///<Clears the selected points in an event
