@@ -777,14 +777,20 @@ void RecoBaseDrawer::Cluster2D(const art::Event& evt,
 
     geo::View_t gview = geo->TPC(rawOpt->fTPC).Plane(plane).View();
 
-    // if user sets "DrawClusters" to 2, draw the clusters differently:
-//    bool drawAsMarkers = (recoOpt->fDrawClusters == 1 ||
-//                          recoOpt->fDrawClusters == 3);
-    bool drawAsMarkers = recoOpt->fDrawClusters != 2;
-                          
-    // draw connecting lines between cluster hits?
-    bool drawConnectingLines = (recoOpt->fDrawClusters >= 3);
-
+  // decide how to draw clusters using fDrawClusters
+  // 1 = colored markers
+  // 2 = markers + connecting lines
+  // 3 = markers + connecting lines + cluster ID text
+  // 4 = draw cluster outlines
+  // 5 = colors represent matching clusters (3D PFParticles)
+  // 6 = colors represent cluster parent + shower clusters (2D PFParticles)
+  bool drawMarkers = true;
+  bool drawConnectingLines = recoOpt->fDrawClusters > 1 && recoOpt->fDrawClusters != 4;
+  bool drawIDText = recoOpt->fDrawClusters == 3;
+  bool drawOutlines = recoOpt->fDrawClusters == 4;
+  bool draw3DPFPs = recoOpt->fDrawClusters == 5;
+  bool draw2DPFPShowers = recoOpt->fDrawClusters == 6;
+  
     for(size_t imod = 0; imod < recoOpt->fClusterLabels.size(); ++imod)
     {
         std::string const which = recoOpt->fClusterLabels[imod];
@@ -799,100 +805,99 @@ void RecoBaseDrawer::Cluster2D(const art::Event& evt,
 
         for (size_t ic = 0; ic < clust.size(); ++ic)
         {
-            // only worry about clusters with the correct view
-	        if(clust[ic]->View() != gview) continue;
-            
-            // see if we can set the color index in a sensible fashion
-            int clusterIdx(clust[ic]->ID());
-            int colorIdx(clusterIdx%evd::kNCOLS);
-            
-            if (fmc.isValid() && fmc.at(ic).isValid())
-            {
-                const recob::PFParticle& pfParticle(fmc.at(ic).ref());
-                clusterIdx = pfParticle.Self();
-                colorIdx   = clusterIdx % evd::kNCOLS;
-            }
-
-        std::vector<const recob::Hit*> hits = fmh.at(ic);
-
-        // check for correct tpc, the view check done above
-        // ensures we are in the correct plane
-//        if((*hits.begin())->WireID().TPC      != rawOpt->fTPC || 
-//           (*hits.begin())->WireID().Cryostat != rawOpt->fCryostat) continue;
-
-        if (drawAsMarkers) {
-          // draw cluster with unique marker
-          // Place this cluster's unique marker at the hit's location
-          int color  = evd::kColor[colorIdx];
-          this->Hit2D(hits, color, view, drawConnectingLines);
+          // only worry about clusters with the correct view
+          if(clust[ic]->View() != gview) continue;
           
-          if(recoOpt->fDrawClusters > 3) {
-            // BB: draw the cluster ID
-            std::string s = std::to_string(clusterIdx);
-            char const* txt = s.c_str();
-            double wire = clust[ic]->StartWire();
-            double tick = 20 + clust[ic]->StartTick();
-            TText& clID = view->AddText(wire, tick, txt);
-            clID.SetTextColor(color);
-          } // recoOpt->fDrawClusters > 3
+          // see if we can set the color index in a sensible fashion
+          int clusterIdx(clust[ic]->ID());
+          int colorIdx(clusterIdx%evd::kNCOLS);
+          
+          if ((draw3DPFPs || draw2DPFPShowers) && fmc.isValid() && fmc.at(ic).isValid()) {
+            const recob::PFParticle& pfParticle(fmc.at(ic).ref());
+            clusterIdx = pfParticle.Self();
+            // BB: Draw daughter PFParticle clusters with the same color code
+            // which is derived from the parent if this is a shower-like
+            // cluster
+            if(draw2DPFPShowers && pfParticle.Parent() < clust.size() && pfParticle.PdgCode() == 12)
+              clusterIdx = pfParticle.Parent() + 1;
+            colorIdx   = clusterIdx % evd::kNCOLS;
+          }
+          
+          std::vector<const recob::Hit*> hits = fmh.at(ic);
+          
+          if (drawMarkers) {
+            // draw cluster with unique marker
+            // Place this cluster's unique marker at the hit's location
+            int color  = evd::kColor[colorIdx];
+            this->Hit2D(hits, color, view, drawConnectingLines);
+            
+            if(drawIDText) {
+              std::string s = std::to_string(clusterIdx);
+              char const* txt = s.c_str();
+              double wire = clust[ic]->StartWire();
+              double tick = 20 + clust[ic]->StartTick();
+              TText& clID = view->AddText(wire, tick, txt);
+              clID.SetTextColor(color);
+            } // drawIDText
+          } // drawMarkers
+          
+          if(drawOutlines) {
+            // default "outline" method:
+            std::vector<double> tpts, wpts;
+            
+            this->GetClusterOutlines(hits, tpts, wpts, plane);
+            
+            int lcolor = 9; // line color
+            int fcolor = 9; // fill color
+            int width  = 2; // line width
+            int style  = 1; // 1=solid line style
+            if (view != 0) {
+              TPolyLine& p1 = view->AddPolyLine(wpts.size(),
+                                                lcolor,
+                                                width,
+                                                style);
+              TPolyLine& p2 = view->AddPolyLine(wpts.size(),
+                                                lcolor,
+                                                width,
+                                                style);
+              p1.SetOption("f");
+              p1.SetFillStyle(3003);
+              p1.SetFillColor(fcolor);
+              for (size_t i = 0; i < wpts.size(); ++i) {
+                if(rawOpt->fAxisOrientation < 1){
+                  p1.SetPoint(i, wpts[i], tpts[i]);
+                  p2.SetPoint(i, wpts[i], tpts[i]);
+                }
+                else{
+                  p1.SetPoint(i, tpts[i], wpts[i]);
+                  p2.SetPoint(i, tpts[i], wpts[i]);
+                }
+              } // loop on i points in ZX view
+            } // if we have a cluster in the ZX view
+          }// end if outline mode
+/*
+          // draw the direction cosine of the cluster as well as it's starting point
+          // (average of the start and end angle -- by default they are the same value)
+          // thetawire is the angle measured CW from +z axis to wire
+          //double thetawire = geo->TPC(t).Plane(plane).Wire(0).ThetaZ();
+          double wirePitch = geo->WirePitch(gview);
+          double driftvelocity = larp->DriftVelocity(); // cm/us
+          double timetick = detprop->SamplingRate()*1e-3;  // time sample in us
+          //rotate coord system CCW around x-axis by pi-thetawire
+          //   new yprime direction is perpendicular to the wire direction
+          //   in the same plane as the wires and in the direction of
+          //   increasing wire number
+          //use yprime-component of dir cos in rotated coord sys to get
+          //   dTdW (number of time ticks per unit of wire pitch)
+          //double rotang = 3.1416-thetawire;
+          this->Draw2DSlopeEndPoints(
+                                     clust[ic]->StartWire(), clust[ic]->StartTick(),
+                                     clust[ic]->EndWire(),   clust[ic]->EndTick(),
+                                     std::tan((clust[ic]->StartAngle() + clust[ic]->EndAngle())/2.)*wirePitch/driftvelocity/timetick,
+                                     evd::kColor[colorIdx], view
+                                     );
         }
-        else {
-
-          // default "outline" method:
-          std::vector<double> tpts, wpts;
-      
-	            this->GetClusterOutlines(hits, tpts, wpts, plane);
-      
-          int lcolor = 9; // line color
-          int fcolor = 9; // fill color
-          int width  = 2; // line width
-          int style  = 1; // 1=solid line style
-          if (view != 0) {
-            TPolyLine& p1 = view->AddPolyLine(wpts.size(), 
-                                              lcolor,
-                                              width,
-                                              style);
-            TPolyLine& p2 = view->AddPolyLine(wpts.size(),
-                                              lcolor,
-                                              width,
-                                              style);
-            p1.SetOption("f");
-            p1.SetFillStyle(3003);
-            p1.SetFillColor(fcolor);
-            for (size_t i = 0; i < wpts.size(); ++i) {
-              if(rawOpt->fAxisOrientation < 1){
-                p1.SetPoint(i, wpts[i], tpts[i]);
-                p2.SetPoint(i, wpts[i], tpts[i]);
-              }
-              else{
-                p1.SetPoint(i, tpts[i], wpts[i]);
-                p2.SetPoint(i, tpts[i], wpts[i]);
-              }
-            } // loop on i points in ZX view
-          } // if we have a cluster in the ZX view
-        }// end if outline mode
-
-        // draw the direction cosine of the cluster as well as it's starting point
-        // (average of the start and end angle -- by default they are the same value)
-    // thetawire is the angle measured CW from +z axis to wire
-	//double thetawire = geo->TPC(t).Plane(plane).Wire(0).ThetaZ();
-	double wirePitch = geo->WirePitch(gview);
-	double driftvelocity = larp->DriftVelocity(); // cm/us
-	double timetick = detprop->SamplingRate()*1e-3;  // time sample in us
-	//rotate coord system CCW around x-axis by pi-thetawire
-	//   new yprime direction is perpendicular to the wire direction
-	//   in the same plane as the wires and in the direction of
-	//   increasing wire number
-	//use yprime-component of dir cos in rotated coord sys to get
-	//   dTdW (number of time ticks per unit of wire pitch)
-	//double rotang = 3.1416-thetawire;
-        this->Draw2DSlopeEndPoints(
-	       clust[ic]->StartWire(), clust[ic]->StartTick(),
-	       clust[ic]->EndWire(),   clust[ic]->EndTick(),
-	       std::tan((clust[ic]->StartAngle() + clust[ic]->EndAngle())/2.)*wirePitch/driftvelocity/timetick,
-	       evd::kColor[colorIdx], view
-				   );
-
+*/
       } // loop on ic clusters
     } // loop on imod folders
     
