@@ -1824,9 +1824,127 @@ namespace evd{
   //......................................................................
   void TWQProjectionView::SetUpClusterButtons()
   {
-    art::ServiceHandle<evd::EvdLayoutOptions>        evdlayoutopt;  
-    if(!evdlayoutopt->fShowClusterSection)            
+    art::ServiceHandle<evd::EvdLayoutOptions>        evdlayoutopt;
+    
+    std::cout<<"inside SetUpClusterButtons "<<evdlayoutopt->fShowClusterSection<<"\n";
+    if(evdlayoutopt->fShowClusterSection == 0) return;
+    
+    if(evdlayoutopt->fShowClusterSection == 1) {
+      // This sets up the sidebar buttons for manual cluster editing
+      SetUpClusterButtons1();
+    } else if(evdlayoutopt->fShowClusterSection == 2) {
+      // This sets up the sidebar buttons for cycling through cluster
+      // drawing options
+      SetUpClusterButtons2();
+    }
+  } // SetUpClusterButtons
+
+  //......................................................................
+  void TWQProjectionView::SetUpClusterButtons2()
+  {
+    std::cout<<"write some code here\n";
+    art::ServiceHandle<evd::RecoDrawingOptions> recoOpt;
+
+    fCycleClusterDrawOptions = new TGTextButton(fVFrame, new TGHotString("&Cycle cluster option"), 0);
+    fCycleClusterDrawOptions->Connect("Clicked()", "evd::TWQProjectionView", this, "CycleClusterOptions()");
+    fVFrame->AddFrame(fCycleClusterDrawOptions, new TGLayoutHints(kLHintsTop|kLHintsLeft,0,0,5,1));
+    
+    fClusterOptionInfo = new TGTextView(fVFrame,115,75,999,TGView::kNoHSB | TGView::kNoVSB); ///< Display the calculated angles
+    fClusterOptionInfo->SetEditable("false");
+    // Get a vector of strings to put on each line in the TGTextView box
+    std::vector<std::string> cot;
+    ClusterOptionText(cot);
+    TGText *tt = new TGText(cot[0].c_str());
+    fClusterOptionInfo->SetText(tt);
+    for(unsigned short ii = 1; ii < cot.size(); ++ii) {
+//      TGText *tt = new TGText(cot[ii].c_str());
+      fClusterOptionInfo->AddLine(cot[ii].c_str());
+    }
+    fVFrame->AddFrame(fClusterOptionInfo,new TGLayoutHints(kLHintsTop | kLHintsLeft,0,0,5,1));
+
+  } // SetUpClusterButtons2
+
+  void TWQProjectionView::ClusterOptionText(std::vector<std::string>& cot)
+  {
+    art::ServiceHandle<evd::RecoDrawingOptions> recoOpt;
+
+    cot.clear();
+    if(recoOpt->fDrawClusters == 0) {
+      cot.push_back("Option: 0");
+      cot.push_back("Clusters");
+      cot.push_back("not shown");
       return;
+    }
+    if(recoOpt->fDrawClusters == 1) {
+      cot.push_back("Option: 1");
+      cot.push_back("Markers");
+      return;
+    }
+    if(recoOpt->fDrawClusters == 2) {
+      cot.push_back("Option: 2");
+      cot.push_back("Markers");
+      cot.push_back("Lines");
+      return;
+    }
+    if(recoOpt->fDrawClusters == 3) {
+      cot.push_back("Option: 3");
+      cot.push_back("Markers");
+      cot.push_back("Lines");
+      cot.push_back("cls ID");
+      return;
+    }
+    if(recoOpt->fDrawClusters == 4) {
+      cot.push_back("Option: 4");
+      cot.push_back("Outlines");
+      return;
+    }
+    if(recoOpt->fDrawClusters == 5) {
+      cot.push_back("Option: 5");
+      cot.push_back("3D PFParticles.");
+      cot.push_back("Color matched");
+      cot.push_back("btw planes");
+      return;
+    }
+    if(recoOpt->fDrawClusters == 6) {
+      cot.push_back("Option: 6");
+      cot.push_back("2D PFParticles.");
+      cot.push_back("Parent color 1");
+      cot.push_back("Shower color 2");
+      return;
+    }
+    cot.push_back("Option: ??");
+    cot.push_back("Unknown");
+  } // ClusterOptionText
+
+  //......................................................................
+  void TWQProjectionView::CycleClusterOptions()
+  {
+    art::ServiceHandle<evd::RecoDrawingOptions> recoOpt;
+    ++recoOpt->fDrawClusters;
+    if(recoOpt->fDrawClusters > 6) recoOpt->fDrawClusters = 0;
+    
+    std::vector<std::string> cot;
+    ClusterOptionText(cot);
+    TGText *tt = new TGText(cot[0].c_str());
+    fClusterOptionInfo->SetText(tt);
+    for(unsigned short ii = 1; ii < cot.size(); ++ii) {
+      fClusterOptionInfo->AddLine(cot[ii].c_str());
+    }
+    
+    fClusterOptionInfo->Update();
+    ResetRegionsOfInterest();
+    DrawPads();
+    
+  } // CycleClusterOptions
+
+  
+  //......................................................................
+  void TWQProjectionView::SetUpClusterButtons1()
+  {
+    art::ServiceHandle<evd::EvdLayoutOptions>        evdlayoutopt;
+
+    if(evdlayoutopt->fShowClusterSection != 1) return;
+    
     // enter zoom buttons
 		
     fToggleZoom = new TGRadioButton(fVFrame,"Use Zoom",          2);
