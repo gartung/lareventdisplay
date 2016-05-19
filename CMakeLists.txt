@@ -56,8 +56,7 @@ include(ArtMake)
 include(BuildPlugins)
 
 # source
-add_subdirectory(EventDisplay)
-add_subdirectory(EveDisplay)
+add_subdirectory(lareventdisplay)
 
 # ups - table and config files
 add_subdirectory(ups)
