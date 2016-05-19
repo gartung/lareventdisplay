@@ -1,0 +1,37 @@
+// author: Andrew Olivier aoliv23@lsu.edu
+// brief:  Holds a heterogeneous collection of algorithm objects with properties detailed below
+// date:   5/17/2016
+
+//Template Parameter
+//ALG: An algorithm that constructs TEveScene objects
+//An ALG must have the following methods: 
+//*ALG::ALG()
+//*void ALG::reconfigure(const fhicl::ParameterSet& p)
+//*TEveScene* ALG::makeScene(const art::Event& evt)
+//*void ALG::initialize()
+
+//c++ include
+#include <memory>
+
+template <typename ...ALGS>
+struct AlgHolder;
+
+template <typename ALG>
+struct AlgHolder<ALG>
+{
+  AlgHolder() { this->fAlg.reset(new ALG()); }
+  const ALG get() { return this->fAlg; }
+
+  private:
+    std::unique_ptr<ALG> fAlg;
+};
+
+template <typename T, typename ...ALGS>
+struct AlgHolder<T, ALGS...>: virtual AlgHolder<ALGS...>
+{
+  AlgHolder(): AlgHolder<ALGS...>() { this->fAlg.reset(new T()); }
+  const T get() { return this->fAlg; }
+
+  private:
+    std::unique_ptr<T> fAlg;
+};
