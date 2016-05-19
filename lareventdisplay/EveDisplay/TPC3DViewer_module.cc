@@ -3,15 +3,15 @@
 // \brief: module to produce a 3D view of the TPC(s)
 
 //LArSoft includes
-#include "EveDisplay/GenericSceneMaker.h"
-#include "EveDisplay/SimpleGeoMaker.h"
-#include "EveDisplay/GenericViewerMaker.h"
+#include "lareventdisplay/EveDisplay/GenericSceneMaker.h"
+#include "lareventdisplay/EveDisplay/SimpleGeoMaker.h"
+#include "lareventdisplay/EveDisplay/GenericViewerMaker.h"
+#include "lareventdisplay/EveDisplay/TLArTrack.h"
 
 //Framework includes
 #include "art/Framework/Core/ModuleMacros.h"
 
 //ROOT includes
-#include "TEveTrack.h"
 
 #ifndef EVED_TPC3DVIEWER_MODULE_CC
 #define EVED_TPC3DVIEWER_MODULE_CC

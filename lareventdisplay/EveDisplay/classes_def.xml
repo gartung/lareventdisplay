@@ -15,37 +15,26 @@
  
  <!-- data product classes -->
  <class name="TEveTrack" ClassVersion="0" persistent="false"/>
- <class name="TEveScene" ClassVersion="0" persistent="false"/>
  
  <!-- art pointers and pointer vectors -->
  <class name="art::Ptr<TEveTrack>"                            />
- <class name="art::Ptr<TEveScene>"                            />
  <class name="art::PtrVector<TEveTrack>"                      />
- <class name="art::PtrVector<TEveScene>"                      />
- <class name="std::vector< art::PtrVector<TEveTrack> >"       />
- <class name="std::vector< art::PtrVector<TEveScene> >"       />
  
  <!-- pairs and tuples for associations -->
  <class name="std::pair< art::Ptr<TEveTrack>, art::Ptr<recob::Track>      >" />
- <class name="std::pair< art::Ptr<TEveScene>, art::Ptr<recob::Track>      >" />
  
  <!-- associations -->
  <class name="art::Assns<TEveTrack,       recob::Track,      void>"          />
- <class name="art::Assns<TEveScene,       TEveTrack,      void>"          />
 
  <!-- vectors for data products -->
  <class name="std::vector<TEveTrack>"       />
- <class name="std::vector<TEveScene>"       />
  
  <!-- art data product wrappers -->
  <class name="art::Wrapper< std::vector< TEveTrack                        > >" />
- <class name="art::Wrapper< std::vector< TEveScene                        > >" />
  <class name="art::Wrapper< std::vector< art::PtrVector< TEveTrack        > >" />
- <class name="art::Wrapper< std::vector< art::PtrVector< TEveScene        > >" />
  
  <!-- art association wrappers -->
  <class name="art::Wrapper< art::Assns<TEveTrack,       recob::Track,      void> >"          />
- <class name="art::Wrapper< art::Assns<TEveScene,       TEveTrack,      void> >"          />
 
 <!-- <ioread 
     version="[-11]" 

@@ -22,8 +22,8 @@
 #include "art/Persistency/Common/PtrVector.h"
 
 //LArSoft includes
-#include "EveDisplay/EveDisplay.h"
-#include "EveDisplay/AlgHolder.h"
+#include "lareventdisplay/EveDisplay/EveDisplay.h"
+#include "lareventdisplay/EveDisplay/AlgHolder.h"
 
 //ROOT includes
 #include "TEveViewer.h"

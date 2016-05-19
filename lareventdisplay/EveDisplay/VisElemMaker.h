@@ -24,7 +24,7 @@
 #include <memory>
 
 //LArSoft includes
-#include "Utilities/AssociationUtil.h"
+#include "lardata/Utilities/AssociationUtil.h"
 
 //ROOT includes
 

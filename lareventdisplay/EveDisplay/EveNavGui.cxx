@@ -1,5 +1,5 @@
 //Implementation of GUI for event navigation
-#include "EveDisplay/EveNavGui.h"
+#include "lareventdisplay/EveDisplay/EveNavGui.h"
 #include <string>
 
 //ROOT includes
@@ -41,12 +41,12 @@ eved::EveNavGui::EveNavGui(TEveBrowser* browse)
   fButtonBar->AddFrame(fGoTo);
 
   fRun = new TGTextEntry(fButtonBar, new TGTextBuffer(128));
-  fRun->Connect("ReturnPressed()", "eved::EveNavGui", this, "GoTo");
+  fRun->Connect("ReturnPressed()", "eved::EveNavGui", this, "GoTo()");
   fRun->Resize(75, 20);
   fButtonBar->AddFrame(fRun);
 
   fEvent = new TGTextEntry(fButtonBar, new TGTextBuffer(128));
-  fEvent->Connect("ReturnPressed()", "eved::EveNavGui", this, "GoTo");
+  fEvent->Connect("ReturnPressed()", "eved::EveNavGui", this, "GoTo()");
   fEvent->Resize(75, 20);
   fButtonBar->AddFrame(fEvent);
 

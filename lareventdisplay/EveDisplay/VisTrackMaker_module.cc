@@ -4,9 +4,9 @@
 // Date: 4/24/2016
 
 //LArSoft includes
-#include "EveDisplay/VisElemMaker.h"
-#include "RecoBase/Track.h"
-#include "Utilities/AssociationUtil.h"
+#include "lareventdisplay/EveDisplay/VisElemMaker.h"
+#include "lardata/RecoBase/Track.h"
+#include "lardata/Utilities/AssociationUtil.h"
 
 //Art includes
 #include "fhiclcpp/ParameterSet.h"
@@ -15,7 +15,6 @@
 #include "art/Persistency/Common/Ptr.h"
 
 //ROOT includes
-#include "TEveTrack.h"
 #include "TEveTrack.h"
 #include "TEvePathMark.h"
 #include "TVector3.h"
@@ -35,7 +34,7 @@ namespace eved {
       TrackMaker(fhicl::ParameterSet const& p) {} //nothing to do for the constructor yet
       ~TrackMaker() {}
 
-      TEveTrack* MakeVis(const art::Ptr<recob::Track> &track); //make a TEveTrack for each recob::Track
+      TEveTrack* MakeVis(const art::Ptr<recob::Track> &track, std::string moduleLabel); //make a TLArTrack for each recob::Track
 
       void Initialize() {} //do nothing at the beginning of each job
 
@@ -43,14 +42,14 @@ namespace eved {
   };
   
 
-  TEveTrack* TrackMaker::MakeVis(const art::Ptr<recob::Track> &track) //make a TEveTrack for each recob::Track
+  TEveTrack* TrackMaker::MakeVis(const art::Ptr<recob::Track> &track, std::string moduleLabel) //make a TLArTrack for each recob::Track
   {
-    TEveTrack* retVal = new TEveTrack(); //This is the TEveTrack we will return
+    TEveTrack* retVal = new TLArTrack(moduleLabel); //This is the TLArTrack we will return
     for(size_t posIt = 0; posIt < track->NumberTrajectoryPoints(); ++posIt) //loop over track trajectory points
     {
       TEveVectorT<double> evePos;
-      evePos.Set(track->LocationAtPoint(posIt));
-      retVal->AddPathMark(TEvePathMarkD(TEvePathMarkD::kLineSegment, evePos));
+      evePos.Set(track->LocationAtPoint(posIt)); 
+      retVal->AddPathMark(TEvePathMarkD(TEvePathMarkD::kLineSegment, evePos)); //method derived from TEveTrack
     }
     
     return retVal;

@@ -1,2 +1,2 @@
-
+add_subdirectory(EveDisplay)
 add_subdirectory(EventDisplay)

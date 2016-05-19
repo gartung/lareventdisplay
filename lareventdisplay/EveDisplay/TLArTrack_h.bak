@@ -1,0 +1,29 @@
+// \file: TLArTrack.h
+// \author: Andrew Olivier aoliv23@lsu.edu
+// \brief: Visualization for track-like objects in the EVE-based event display.
+
+//ROOT includes
+#include "TEveTrack.h"
+
+//LArSoft includes
+#include "lareventdisplay/EveDisplay/TLArElement.h"
+
+#ifndef EVED_TLARTRACK
+#define EVED_TLARTRACK
+
+namespace eved
+{
+  class TLArTrack: public TEveTrack, public TLArElement
+  {
+    public:
+      TLArTrack(std::string label);
+      virtual ~TLArTrack() {};
+
+      TLArTrack& operator=(const TLArTrack& track); //because TEveTrack does not implement operator=
+      //I think everything else is provided by TEveTrack and TLArElement, but feel free to add stuff you think might be useful!  
+
+    ClassDef(TLArTrack, 0);
+  };
+}
+
+#endif

@@ -10,9 +10,10 @@
 #include "EventDisplayBase/NavState.h"
 
 //LArSoft includes
-#include "EveDisplay/EveDisplay.h"
+#include "lareventdisplay/EveDisplay/EveDisplay.h"
 //#include "EveDisplay/EvePSetGui.h"
-#include "EveDisplay/EveNavGui.h"
+#include "EventDisplayBase/RootEnv.h"
+#include "lareventdisplay/EveDisplay/EveNavGui.h"
 
 //ART includes
 #include "art/Framework/IO/Root/RootInput.h"
@@ -21,6 +22,9 @@
 
 namespace eved 
 {
+
+  static evdb::RootEnv gsRootEnv(0,0); //Taken from EventDisplayBase/EventDisplay_service.cc.  I want to find a way around this if I can.
+
   EveDisplay::EveDisplay(fhicl::ParameterSet const& pset, art::ActivityRegistry &reg): ui::UserInteraction(reg)
   {
     if(gEve != nullptr)

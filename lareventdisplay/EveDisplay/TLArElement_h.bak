@@ -1,0 +1,26 @@
+// \file: TLArElement.h
+// \author: Andrew Olivier aoliv23@lsu.edu
+// \brief: Base class with LArSoft-specific information for visualization objects
+
+#include <string>
+
+#ifndef EVED_TLARELEMENT
+#define EVED_TLARELEMENT
+
+namespace eved
+{
+  class TLArElement
+  {
+    public:
+      TLArElement(std::string label): fModuleLabel(label) {}
+      virtual ~TLArElement() {}
+  
+      std::string GetModuleLabel() { return fModuleLabel; }
+    
+    private:
+      std::string fModuleLabel; //Module label that produced the data product visualized
+    //Maybe add a data tier type and member or a traits class?
+  };
+}
+
+#endif

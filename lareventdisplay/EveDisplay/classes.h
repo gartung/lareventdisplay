@@ -16,14 +16,14 @@
 #include "art/Persistency/Common/Wrapper.h"
 #include "art/Persistency/Common/Assns.h"
 
+#include "lardata/RecoBase/Track.h"
+
 #include "TEveTrack.h"
-#include "TEveScene.h"
 
 // make dummy variables of the PtrVector types so that we are
 // sure to generate the dictionaries for them
 namespace {
   art::PtrVector<TEveTrack>       teev;
-  art::PtrVector<TEveScene>       teev;
 }
 
 //
@@ -32,21 +32,14 @@ namespace {
 //
 
 template class std::vector<TEveTrack>;
-template class std::vector<TEveScene>;
 
 template class art::Ptr<TEveTrack>;
-template class art::Ptr<TEveScene>;
 
 template class std::pair< art::Ptr<TEveTrack>, art::Ptr<recob::Track>      >; 
-template class std::pair< art::Ptr<TEveScene>, art::Ptr<recob::Track>      >; 
 
 template class art::Assns<TEveTrack,       recob::Track,      void>;
-template class art::Assns<TEveScene,       TEveTrack,      void>;
 
 template class art::Wrapper< std::vector< TEveTrack                        > >;
-template class art::Wrapper< std::vector< TEveScene                        > >;
 template class art::Wrapper< std::vector< art::PtrVector< TEveTrack        > >;
-template class art::Wrapper< std::vector< art::PtrVector< TEveScene        > >;
 
 template class art::Wrapper< art::Assns<TEveTrack,       recob::Track,      void> >;
-template class art::Wrapper< art::Assns<TEveScene,       TEveTrack,      void> >;

@@ -1,6 +1,7 @@
+include(CetRootCint)
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
 
-set( PACKAGE EveDisplay )
+set( PACKAGE lareventdisplay_EveDisplay )
 FILE( GLOB src_files *.cxx )
 
 set( EVE_LIBS ${ART_FRAMEWORK_SERVICES_REGISTRY}
@@ -51,12 +52,12 @@ cet_rootcint( ${PACKAGE} )
 art_make_library( LIBRARY_NAME ${PACKAGE}
                   SOURCE ${src_files} ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE}Cint.cc
                   LIBRARIES SimulationBase ${EVE_LIBS} 
-                  Geometry
+                  larcore_Geometry
                 )
 
 set( EVE_SERVICE_LIBS ${PACKAGE} ${EVE_LIBS} )
 simple_plugin( EveDisplay service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
-simple_plugin( TrackMaker module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( VisTrackMaker module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( TPC3DViewer module EveDisplay_service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 
 install_headers()

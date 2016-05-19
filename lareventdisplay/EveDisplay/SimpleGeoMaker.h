@@ -10,7 +10,7 @@
 #include "cetlib/exception.h"
 
 //LArSoft includes
-#include "Geometry/Geometry.h"
+#include "larcore/Geometry/Geometry.h"
 
 //c++ includes
 #include <vector>

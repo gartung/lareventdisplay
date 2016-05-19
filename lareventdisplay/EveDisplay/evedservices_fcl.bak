@@ -1,0 +1,20 @@
+#Standard service and module configurations for the EVE-based event display
+
+BEGIN_PROLOG
+
+eveddisplayservice:
+{
+  service_provider: "EveDisplay"
+}
+
+vistrackmaker:
+{
+  module_type: "VisTrackMaker"
+}
+
+tpc3dviewer:
+{
+  module_type: "TPC3DViewer"
+}
+
+END_PROGLOG

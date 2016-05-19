@@ -9,8 +9,8 @@
 #include "cetlib/exception.h"
 
 //LArSoft includes
-#include "Geometry/Geometry.h"
-#include "EveDisplay/SimpleGeoMaker.h"
+#include "larcore/Geometry/Geometry.h"
+#include "lareventdisplay/EveDisplay/SimpleGeoMaker.h"
 
 //c++ includes
 #include <vector>
