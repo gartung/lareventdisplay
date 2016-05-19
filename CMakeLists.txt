@@ -57,6 +57,7 @@ include(BuildPlugins)
 
 # source
 add_subdirectory(EventDisplay)
+add_subdirectory(EveDisplay)
 
 # ups - table and config files
 add_subdirectory(ups)
