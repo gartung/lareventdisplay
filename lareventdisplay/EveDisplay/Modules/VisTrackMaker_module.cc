@@ -4,7 +4,7 @@
 // Date: 4/24/2016
 
 //LArSoft includes
-#include "lareventdisplay/EveDisplay/VisElemMaker.h"
+#include "lareventdisplay/EveDisplay/Modules/VisElemMaker.h"
 #include "lardata/RecoBase/Track.h"
 #include "lardata/Utilities/AssociationUtil.h"
 

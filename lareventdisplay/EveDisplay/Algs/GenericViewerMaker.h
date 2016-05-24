@@ -22,8 +22,8 @@
 #include "art/Persistency/Common/PtrVector.h"
 
 //LArSoft includes
-#include "lareventdisplay/EveDisplay/EveDisplay.h"
-#include "lareventdisplay/EveDisplay/AlgHolder.h"
+#include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
+#include "lareventdisplay/EveDisplay/Algs/AlgHolder.h"
 
 //ROOT includes
 #include "TEveViewer.h"
@@ -32,6 +32,9 @@
 #include "TEvePathMark.h"
 #include "TVector3.h"
 #include "TEveVector.h"
+#include "TGLViewer.h"
+#include "TEveProjections.h"
+#include "TEveProjectionAxes.h"
 
 //c++ includes
 #include <memory>
@@ -46,7 +49,8 @@ namespace eved {
 //An ALG must have the following methods: 
 //*ALG::ALG()
 //*void ALG::reconfigure(const fhicl::ParameterSet& p)
-//*TEveScene* ALG::makeScene(const art::Event& evt)
+//*void ALG::makeEvent(const art::Event& evt) 
+//*TEveScene* ALG::makeGlobal() 
 //*void ALG::initialize()
 
 //NAME: the name of this TEveViewer in the event display
@@ -86,13 +90,14 @@ private:
   // Declare member data here.
   //AlgHolder<ALGS...> fAlgHolder;
   TEveViewer* fViewer;
+  //TEveProjectionAxes*    fAxes;
 
 };
 
 template <std::string &NAME, class ...ALGS>
 eved::GenericViewerMaker<NAME, ALGS...>::GenericViewerMaker(fhicl::ParameterSet const & p)
   :
-  EDAnalyzer(p)//,
+  EDAnalyzer(p), fViewer(0)
   //SingleAlgHolder<ALGS>()...
  // More initializers here.
 {
@@ -104,7 +109,8 @@ template <std::string &NAME, class ...ALGS>
 void eved::GenericViewerMaker<NAME, ALGS...>::analyze(art::Event const & e)
 {
   // Implementation of required member function here.
-  int null[] = {(fViewer->AddScene(SingleAlgHolder<ALGS>::get()->makeScene(e)), 0)...};
+  mf::LogWarning("GenericViewerMaker") << "Making scenes in GenericViewerMaker.\n";
+  int null[] = {(SingleAlgHolder<ALGS>::get()->makeEvent(e), 0)...};
   (void)null; //convince the compiler that null is used without generating any code
 }
 
@@ -114,6 +120,12 @@ void eved::GenericViewerMaker<NAME, ALGS...>::beginJob()
   // Implementation of optional member function here.
   int null[] = {0, (SingleAlgHolder<ALGS>::get()->initialize(), 0)..., 0};
   (void)null; //convince the compiler that null is used without generating any code
+ 
+  auto glview = fViewer->GetGLViewer(); //Temporary set up of GLViewer.  This should be fcl-controlled in the future...
+  glview->UseLightColorSet();
+  glview->SetGuideState(TGLUtil::kAxesEdge, kTRUE, kFALSE, 0);
+  glview->PreferLocalFrame();
+  glview->ResetCameras();
 }
 
 template <std::string &NAME, class ...ALGS>
@@ -126,6 +138,10 @@ template <std::string &NAME, class ...ALGS>
 void eved::GenericViewerMaker<NAME, ALGS...>::beginSubRun(art::SubRun const & sr)
 {
   // Implementation of optional member function here.
+  int null[] = { (fViewer->AddScene(SingleAlgHolder<ALGS>::get()->makeGlobal()), 0)... };
+  (void)null;
+
+  //fViewer->AddElement(fAxes); //Need to find a way to get these into each view
 }
 
 template <std::string &NAME, class ...ALGS>

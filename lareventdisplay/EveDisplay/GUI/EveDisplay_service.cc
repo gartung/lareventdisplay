@@ -10,10 +10,10 @@
 #include "EventDisplayBase/NavState.h"
 
 //LArSoft includes
-#include "lareventdisplay/EveDisplay/EveDisplay.h"
+#include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
 //#include "EveDisplay/EvePSetGui.h"
 #include "EventDisplayBase/RootEnv.h"
-#include "lareventdisplay/EveDisplay/EveNavGui.h"
+#include "lareventdisplay/EveDisplay/GUI/EveNavGui.h"
 
 //ART includes
 #include "art/Framework/IO/Root/RootInput.h"
@@ -33,7 +33,7 @@ namespace eved
     }
     else
     {
-      fEve = TEveManager::Create();
+      fEve = TEveManager::Create(kTRUE, "FI"); //we will create viewers ourselves
     }
 
     fNav = new EveNavGui(fEve->GetBrowser());
@@ -46,13 +46,15 @@ namespace eved
     //TApplication stuff to interrupt state machine taken from EventDisplayBase/EventDisplay_service.cc
     TApplication* app = gROOT->GetApplication();
     
+    fEve->FullRedraw3D(kTRUE); //draw for the current event
+
     // Hold here for user input from the GUI...
     app->Run(kTRUE);
 
     int navState = evdb::NavState::Which();
     if(navState == evdb::kNEXT_EVENT) return  NextEvent;
-    if(navState == evdb::kPREV_EVENT) return RewindFile;
-    if(navState == evdb::kRELOAD_EVENT) return ReprocessEvent;
+    else if(navState == evdb::kPREV_EVENT) return RewindFile;
+    else if(navState == evdb::kRELOAD_EVENT) return ReprocessEvent;
     else return Invalid;
 
     //if(navState == kGOTO_EVENT || navState == kSEQUENTIAL_ONLY) return Invalid;

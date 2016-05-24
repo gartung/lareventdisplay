@@ -1,5 +1,5 @@
 //Implementation of GUI for event navigation
-#include "lareventdisplay/EveDisplay/EveNavGui.h"
+#include "lareventdisplay/EveDisplay/GUI/EveNavGui.h"
 #include <string>
 
 //ROOT includes
@@ -18,7 +18,12 @@ eved::EveNavGui::EveNavGui(TEveBrowser* browse)
 {
   //TEveBrowser derives from TGMainFrame indirectly, so we can use this browser as our mainframe
   browse->StartEmbedding(TRootBrowser::kLeft);
-  fButtonBar = new TGHorizontalFrame(browse);
+
+  TGMainFrame* main = new TGMainFrame(gClient->GetRoot(), 1000, 600);
+  main->SetWindowName("Nav GUI");
+  main->SetCleanup(kDeepCleanup);
+
+  fButtonBar = new TGHorizontalFrame(main); //browse);
 
   fPrev = new TGTextButton(fButtonBar, "Previous", 150);
   fPrev->SetToolTipText("Go to previous event");
@@ -55,10 +60,15 @@ eved::EveNavGui::EveNavGui(TEveBrowser* browse)
  
   //fSubRun here similar to fEvent above
 
-  browse->AddFrame(fButtonBar);
+  main->AddFrame(fButtonBar);
+  main->MapSubwindows();
+  main->Resize();
+  main->MapWindow();
+
+  /*browse->AddFrame(fButtonBar);
   browse->MapSubwindows();
   browse->Resize();
-  browse->MapWindow();
+  browse->MapWindow();*/
 
   browse->StopEmbedding();
   browse->SetTabTitle("Event Control", 0);

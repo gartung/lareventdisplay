@@ -9,9 +9,9 @@ eveddisplayservice:
   service_provider: "EveDisplay"
 }
 
-vistrackmaker:
+trackmaker:
 {
-  module_type: "VisTrackMaker"
+  service_provider: "TrackMaker"
   DataLabel:   "pmtrack"
 }
 
@@ -20,13 +20,26 @@ tpc3dviewer:
   module_type: "TPC3DViewer"
   reco: #for the GenericViewerMaker named "reco"
   {
-    F9TEveTrackvE: "vistrackmaker"
+  }
+}
+
+geo3dviewer:
+{
+  module_type: "Geo3DViewer"
+}
+
+track3dviewer:
+{
+  module_type: "Track3DViewer"
+  reco:
+  {
   }
 }
 
 std_eved_services:
 {
   EveDisplay: @local::eveddisplayservice
+  TrackMakerInt: @local::trackmaker
 }
 
 standard_colordrawingopt:

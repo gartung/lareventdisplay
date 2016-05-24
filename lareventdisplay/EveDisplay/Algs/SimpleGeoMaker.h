@@ -29,7 +29,8 @@ namespace eved {
     
       void initialize();
       void reconfigure(const fhicl::ParameterSet& p);
-      TEveScene* makeScene(const art::Event& e);
+      void makeEvent(const art::Event& e);
+      TEveScene* makeGlobal();
 
     //private:
   };

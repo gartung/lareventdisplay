@@ -1,7 +1,7 @@
 include(CetRootCint)
 include_directories ( ${CMAKE_CURRENT_SOURCE_DIR} )
 
-set( PACKAGE lareventdisplay_EveDisplay )
+set( PACKAGE lareventdisplay_EveDisplay_Modules )
 FILE( GLOB src_files *.cxx )
 
 set( EVE_LIBS ${ART_FRAMEWORK_SERVICES_REGISTRY}
@@ -45,7 +45,9 @@ set( EVE_LIBS ${ART_FRAMEWORK_SERVICES_REGISTRY}
               ${ROOT_MATRIX}
               ${ROOT_PHYSICS}
               ${ROOT_MATHCORE}
-              ${ROOT_THREAD} )
+              ${ROOT_THREAD} 
+              lareventdisplay_EveDisplay_Algs
+              lareventdisplay_EveDisplay_GUI)
 
 cet_rootcint( ${PACKAGE} )
 
@@ -56,9 +58,10 @@ art_make_library( LIBRARY_NAME ${PACKAGE}
                 )
 
 set( EVE_SERVICE_LIBS ${PACKAGE} ${EVE_LIBS} )
-simple_plugin( EveDisplay service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
-simple_plugin( VisTrackMaker module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
-simple_plugin( TPC3DViewer module EveDisplay_service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TPC3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( Geo3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( Track3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+
 
 install_headers()
 install_fhicl()

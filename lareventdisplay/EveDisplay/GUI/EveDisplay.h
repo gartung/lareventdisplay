@@ -19,7 +19,7 @@
 #include "art/Framework/Services/Registry/ServiceMacros.h"
 
 //LArSoft includes
-#include "lareventdisplay/EveDisplay/EveNavGui.h"
+#include "lareventdisplay/EveDisplay/GUI/EveNavGui.h"
 //#include "EveDisplay/EvePSetGui.h"
 
 namespace fhicl { class ParameterSet; }
