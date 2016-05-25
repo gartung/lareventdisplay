@@ -11,8 +11,7 @@
 #include "TGTextEntry.h"
 #include "TGPicture.h"
 
-//User global nav state scheme from original LArSot event display
-#include "EventDisplayBase/NavState.h"
+#include "lareventdisplay/EveDisplay/GUI/SRNavState.h"
 
 eved::EveNavGui::EveNavGui(TEveBrowser* browse)
 {
@@ -88,27 +87,27 @@ eved::EveNavGui::~EveNavGui()
 
 void eved::EveNavGui::Next()
 {
-  evdb::NavState::Set(evdb::kNEXT_EVENT);
+  SRNavState::Set(sr_nav_states::kNEXT_EVENT);
 }
 
 void eved::EveNavGui::Prev()
 {
-  evdb::NavState::Set(evdb::kPREV_EVENT);
+  SRNavState::Set(sr_nav_states::kPREV_EVENT);
 }
 
 void eved::EveNavGui::Reload()
 {
-  evdb::NavState::Set(evdb::kRELOAD_EVENT);
+  SRNavState::Set(sr_nav_states::kRELOAD_EVENT);
 }
 
 void eved::EveNavGui::GoTo()
 {
-  int run = atoi(fRun->GetText());
-  int event = atoi(fEvent->GetText());
+  size_t run = atoi(fRun->GetText());
+  size_t event = atoi(fEvent->GetText());
   //int subrun = atoi(fSubRun->GetText());
   //Here, you will probably have to rewrite NavState to handle subruns
-  evdb::NavState::SetTarget(run, event);
-  evdb::NavState::Set(evdb::kGOTO_EVENT);
+  SRNavState::SetTarget(run, 0, event);
+  SRNavState::Set(sr_nav_states::kGOTO_EVENT);
 }
 
 void eved::EveNavGui::SetRunEvent(int run, int event)
