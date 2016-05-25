@@ -61,6 +61,7 @@ set( EVE_SERVICE_LIBS ${PACKAGE} ${EVE_LIBS} )
 simple_plugin( TPC3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( Geo3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( Track3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( Sim3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 
 
 install_headers()

@@ -45,6 +45,8 @@ namespace eved
                                                           //Note that you can, and almost always should, return a pointer to something interesting derived from
                                                           //TEveElement.  
 
+      virtual bool SelectDataProduct(const PROD& prod) { return true; } //Optional function to refuse to draw data products
+
       virtual const std::string GetLabel() { return fDataLabel; }
 
     private:

@@ -1,4 +1,4 @@
-// \file: Track3DViewer_module.cc
+// \file: Sim3DViewer_module.cc
 // \author: Andrew Olivier
 // \brief: module to produce a 3D view of the TPC(s)
 
@@ -6,16 +6,16 @@
 #include "lareventdisplay/EveDisplay/Algs/GenericSceneMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/SimpleGeoMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/GenericViewerMaker.h"
-#include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
-#include "lardata/RecoBase/Track.h"
+#include "lareventdisplay/EveDisplay/Algs/SimPartMakerInt.h"
+#include "SimulationBase/MCParticle.h"
 
 //Framework includes
 #include "art/Framework/Core/ModuleMacros.h"
 
 //ROOT includes
 
-#ifndef EVED_TRACK3DVIEWER_MODULE_CC
-#define EVED_TRACK3DVIEWER_MODULE_CC
+#ifndef EVED_SIM3DVIEWER_MODULE_CC
+#define EVED_SIM3DVIEWER_MODULE_CC
 
 //To view visualization elements in the EVE-based event display, we need to make a viewer.  
 //To make a basic 3D viewer, I have provided the GenericViewerMaker module template.  
@@ -24,12 +24,13 @@
 
 namespace
 {
-  std::string reco("reco");
-  std::string Track3D("Track3D");
+  std::string truth("truth");
+  std::string Sim3D("Sim3D");
 }
 namespace eved
 {
-  typedef eved::GenericViewerMaker<Track3D, eved::GenericSceneMaker<reco, recob::Track>> Track3DViewer;
+
+  typedef eved::GenericViewerMaker<Sim3D, eved::GenericSceneMaker<truth, simb::MCParticle>, eved::SimpleGeoMaker> Sim3DViewer;
   
   //The above class templates are defined in headers under LArSoft includes. The purpose of these templates is to simplify writing custom event displays for 
   //the vast majority of users.  If you want to:
@@ -42,11 +43,11 @@ namespace eved
   //I hope to write class templates like GenericViewerMaker for each of EVE's axis modes and a 2D histogram mode in the near future.    
 }
 
-DEFINE_ART_MODULE(eved::Track3DViewer)
+DEFINE_ART_MODULE(eved::Sim3DViewer)
 
-//We have made a 3D viewer called Track3D that will have the following scenes: 
+//We have made a 3D viewer called Sim3D that will have the following scenes: 
 //1.) A scene named "reco" that will draw all recob::Tracks in each event as TEveTracks
 //2.) A simplified 3D view of the geometry.  
-//To use this view with the EVE-based event display, include an analyzer module named "Track3DViewer" in the end_paths of your fcl file that also has the 
+//To use this view with the EVE-based event display, include an analyzer module named "Sim3DViewer" in the end_paths of your fcl file that also has the 
 //"EveDisplay" service configured.  
 #endif

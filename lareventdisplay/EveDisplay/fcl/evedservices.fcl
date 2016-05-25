@@ -15,10 +15,27 @@ trackmaker:
   DataLabel:   "pmtrack"
 }
 
+simpartmaker:
+{
+  service_provider: "SimPartMaker"
+  DataLabel:   "largeant"
+}
+
 tpc3dviewer:
 {
   module_type: "TPC3DViewer"
   reco: #for the GenericViewerMaker named "reco"
+  {
+  }
+  truth:
+  {
+  }
+}
+
+sim3dviewer:
+{
+  module_type: "Sim3DViewer"
+  truth:
   {
   }
 }
@@ -40,6 +57,7 @@ std_eved_services:
 {
   EveDisplay: @local::eveddisplayservice
   TrackMakerInt: @local::trackmaker
+  SimPartMakerInt: @local::simpartmaker
 }
 
 standard_colordrawingopt:

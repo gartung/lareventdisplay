@@ -108,6 +108,8 @@ eved::GenericViewerMaker<NAME, ALGS...>::GenericViewerMaker(fhicl::ParameterSet 
 template <std::string &NAME, class ...ALGS>
 void eved::GenericViewerMaker<NAME, ALGS...>::analyze(art::Event const & e)
 {
+  fViewer->GetGLViewer()->DeleteOverlayAnnotations();
+
   // Implementation of required member function here.
   mf::LogWarning("GenericViewerMaker") << "Making scenes in GenericViewerMaker.\n";
   int null[] = {(SingleAlgHolder<ALGS>::get()->makeEvent(e), 0)...};

@@ -64,6 +64,8 @@ namespace eved
 
   void SimpleGeoMaker::reconfigure(const fhicl::ParameterSet& p)
   {
+    fGeoTrans = p.get<double>("GeoTrans", 70);
+    fGeoColor = p.get<short>("GeoColor", kBlue);
   }
 
   void SimpleGeoMaker::makeEvent(const art::Event&)
@@ -79,7 +81,7 @@ namespace eved
     TEveScene* retVal = art::ServiceHandle<eved::EveDisplay>()->getEve()->SpawnNewScene("geo", "Simple Geometry Scene"); //new TEveScene("geo");
     retVal->InitMainTrans(kTRUE);
 
-    TEveElementList* beamline = new TEveElementList("beamline", "beamline");   
+    TEveElementList* beamline = new TEveElementList("beamline", "beamline", kTRUE, kTRUE);   
 
     //TEveScene* retVal = art::ServiceHandle<eved::EveDisplay>()->getEve()->GetGlobalScene();
  
@@ -110,6 +112,8 @@ namespace eved
       extract->SetTrans(trans->Array());
 
       auto shape = TEveGeoShape::ImportShapeExtract(extract);
+      shape->SetMainTransparency(fGeoTrans);
+      shape->SetMainColor(fGeoColor);
       shape->VizDB_Insert(shape->GetName(), kTRUE, kTRUE);
 
       //retVal->AddElement(shape);
@@ -120,7 +124,8 @@ namespace eved
     retVal->AddElement(beamline);
 
     //Cryostat visualization
-    TEveElementList* cryoL = new TEveElementList("cryo", "Cryostats");
+    TEveElementList* cryoL = new TEveElementList("cryo", "Cryostats", kTRUE, kTRUE);
+
     for(const auto& cryo: geom->IterateCryostats())
     {
       const TGeoVolume* vol = cryo.Volume();
@@ -139,6 +144,8 @@ namespace eved
       extract->SetTrans(trans->Array());
 
       auto shape = TEveGeoShape::ImportShapeExtract(extract);
+      shape->SetMainTransparency(fGeoTrans);
+      shape->SetMainColor(fGeoColor);
       shape->VizDB_Insert(shape->GetName(), kTRUE, kTRUE);
 
       //retVal->AddElement(shape);
@@ -148,7 +155,8 @@ namespace eved
     retVal->AddElement(cryoL);
 
     //TPC visualization
-    TEveElementList* tpcL = new TEveElementList("tpc", "TPCs");
+    TEveElementList* tpcL = new TEveElementList("tpc", "TPCs", kTRUE, kTRUE);
+
     for(const auto& tpc: geom->IterateTPCs())
     {
       const TGeoVolume* vol = tpc.TotalVolume();
@@ -171,6 +179,8 @@ namespace eved
       extract->SetTrans(trans->Array());
 
       auto shape = TEveGeoShape::ImportShapeExtract(extract);
+      shape->SetMainTransparency(fGeoTrans);
+      shape->SetMainColor(fGeoColor);
       shape->VizDB_Insert(shape->GetName(), kTRUE, kTRUE);
  
       //retVal->AddElement(shape);

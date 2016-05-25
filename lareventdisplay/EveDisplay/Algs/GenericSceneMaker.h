@@ -11,7 +11,7 @@
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/VisMakerInt.h"
-#include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
+//#include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
 #include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
 
 //c++ includes
@@ -23,6 +23,19 @@
 #include "TEveScene.h"
 #include "TEveViewer.h"
 #include "TEveElement.h"
+
+namespace 
+{
+  void DestroyRecursive(TEveElement* el)
+  {
+    for(auto child = el->BeginChildren(); child != el->EndChildren(); ++child)
+    {
+      DestroyRecursive(*child);
+    }
+    el->DestroyElements();
+    return;
+  }
+}
 
 namespace eved {
 
@@ -49,7 +62,7 @@ namespace eved {
       template <class TYPE>
       void _do_reconfigure(const fhicl::ParameterSet& p) 
       {
-        //art::ServiceHandle<eved::VisMakerInt<TYPE>>()->reconfigure(p);
+        art::ServiceHandle<eved::VisMakerInt<TYPE>> alg;
         return;
       }
       template <class TYPE>
@@ -66,10 +79,13 @@ namespace eved {
                                               << alg->GetLabel() << ".\n";
           for(auto& prod: (*prodHand))
           {
-            auto el = alg->MakeVis(prod);
-            el->VizDB_Insert(el->GetElementName(), kTRUE, kTRUE);
-            list->AddElement(el);
-            mf::LogWarning("GenericSceneMaker") << "Added element " << alg->MakeVis(prod)->GetElementName() << " to TEveElementList " << list->GetName() << ".\n";
+            if(alg->SelectDataProduct(prod))
+            {
+              auto el = alg->MakeVis(prod);
+              el->VizDB_Insert(el->GetElementName(), kFALSE, kTRUE);
+              list->AddElement(el);
+              mf::LogWarning("GenericSceneMaker") << "Added element " << alg->MakeVis(prod)->GetElementName() << " to TEveElementList " << list->GetName() << ".\n";
+            }
           }
         }
         catch(cet::exception& exc)
@@ -108,7 +124,8 @@ namespace eved {
   void eved::GenericSceneMaker<NAME, PRODS...>::makeEvent(const art::Event& e)
   {
     mf::LogWarning("GenericSceneMaker") << "In GenericSceneMaker::makeEvent, about to fill scene named " << fScene->GetName() << ".\n";
-    fScene->DestroyElements(); //get rid of last event's elements    
+    ::DestroyRecursive(fScene);
+    //fScene->DestroyElements(); //get rid of last event's elements    
 
     int null[] = {0, (fScene->AddElement(_do_makeEvent<PRODS>(e)), 0)..., 0};
     (void)null; //supposedly so that null appears to be used to the compiler without actually generating any code

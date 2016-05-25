@@ -53,11 +53,12 @@ cet_rootcint( ${PACKAGE} )
 art_make_library( LIBRARY_NAME ${PACKAGE}
                   SOURCE ${src_files} ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE}Cint.cc
                   LIBRARIES SimulationBase ${EVE_LIBS} 
-                  larcore_Geometry EveDisplay_service
+                  larcore_Geometry EveDisplay_service lareventdisplay_EventDisplay
                 )
 
 set( EVE_SERVICE_LIBS ${PACKAGE} ${EVE_LIBS} )
 simple_plugin( TrackMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( SimPartMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 
 install_headers()
 install_fhicl()

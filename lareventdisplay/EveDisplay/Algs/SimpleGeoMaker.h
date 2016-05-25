@@ -32,7 +32,9 @@ namespace eved {
       void makeEvent(const art::Event& e);
       TEveScene* makeGlobal();
 
-    //private:
+    private:
+      double fGeoTrans; //transparency to apply to all geometry objects
+      short fGeoColor; //color to apply to all geometry objects
   };
   
 }

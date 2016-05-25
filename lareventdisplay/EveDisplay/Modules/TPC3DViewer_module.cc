@@ -6,7 +6,10 @@
 #include "lareventdisplay/EveDisplay/Algs/GenericSceneMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/SimpleGeoMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/GenericViewerMaker.h"
+#include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
+#include "lareventdisplay/EveDisplay/Algs/SimPartMakerInt.h"
 #include "lardata/RecoBase/Track.h"
+#include "SimulationBase/MCParticle.h"
 
 //Framework includes
 #include "art/Framework/Core/ModuleMacros.h"
@@ -24,11 +27,15 @@
 namespace
 {
   std::string reco("reco");
+  std::string truth("truth");
   std::string TPC3D("TPC3D");
 }
 namespace eved
 {
-  typedef eved::GenericViewerMaker<TPC3D, eved::GenericSceneMaker<reco, recob::Track>, eved::SimpleGeoMaker> TPC3DViewer;
+  //typedef eved::GenericViewerMaker<TPC3D, eved::GenericSceneMaker<reco, recob::Track, simb::MCParticle>, eved::SimpleGeoMaker> TPC3DViewer;
+  //test of scene with multiple data products
+
+  typedef eved::GenericViewerMaker<TPC3D, eved::GenericSceneMaker<reco, recob::Track>, eved::GenericSceneMaker<truth, simb::MCParticle>, eved::SimpleGeoMaker> TPC3DViewer;
   
   //The above class templates are defined in headers under LArSoft includes. The purpose of these templates is to simplify writing custom event displays for 
   //the vast majority of users.  If you want to:
