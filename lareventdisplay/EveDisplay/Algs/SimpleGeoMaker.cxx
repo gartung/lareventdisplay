@@ -114,6 +114,8 @@ namespace eved
       auto shape = TEveGeoShape::ImportShapeExtract(extract);
       shape->SetMainTransparency(fGeoTrans);
       shape->SetMainColor(fGeoColor);
+      shape->SetTitle(vol->GetName());
+      shape->SetDrawFrame(kTRUE);
       shape->VizDB_Insert(shape->GetName(), kTRUE, kTRUE);
 
       //retVal->AddElement(shape);
@@ -146,6 +148,8 @@ namespace eved
       auto shape = TEveGeoShape::ImportShapeExtract(extract);
       shape->SetMainTransparency(fGeoTrans);
       shape->SetMainColor(fGeoColor);
+      shape->SetTitle(vol->GetName());
+      shape->SetDrawFrame(kTRUE);
       shape->VizDB_Insert(shape->GetName(), kTRUE, kTRUE);
 
       //retVal->AddElement(shape);
@@ -181,6 +185,8 @@ namespace eved
       auto shape = TEveGeoShape::ImportShapeExtract(extract);
       shape->SetMainTransparency(fGeoTrans);
       shape->SetMainColor(fGeoColor);
+      shape->SetTitle(vol->GetName());
+      shape->SetDrawFrame(kTRUE);
       shape->VizDB_Insert(shape->GetName(), kTRUE, kTRUE);
  
       //retVal->AddElement(shape);

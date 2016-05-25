@@ -28,12 +28,14 @@ namespace eved
 
     void eved::SimPartMaker::reconfigure(const fhicl::ParameterSet& p)
     {
-      fMinE = p.get<double>("MinE", 1e-2); //in GeV
+      fMinE = p.get<double>("MinE"); //in GeV
+      mf::LogWarning("SimPartMaker") << "In reconfigure, MinE is " << fMinE << "\n";
     }
 
     bool eved::SimPartMaker::SelectDataProduct(const simb::MCParticle& part)
     {
-      return (part.Momentum(0).E()>fMinE)&&(part.PdgCode() < 1e4); //simb::MCParticle energy values are in GeV
+      mf::LogWarning("SimPartMaker") << "In SelectDataProduct, MinE is " << fMinE << " and particle E0 is " << part.Trajectory().begin()->second.E() << "\n";
+      return (part.Trajectory().begin()->second.E()>fMinE)&&(part.PdgCode() < 1e4); //simb::MCParticle energy values are in GeV
     }
 
     TEveElement* eved::SimPartMaker::MakeVis(const simb::MCParticle& track) //implementation of pure virtual function
@@ -61,7 +63,7 @@ namespace eved
         TEveVectorT<double> pos, mom;
         pos.Set(pt->first.Vect());
         mom.Set(pt->second.Vect());
-        retVal->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDaughter, pos, mom, pt->first.T())); 
+        retVal->AddPathMark(TEvePathMarkD(TEvePathMarkD::kReference, pos, mom, pt->first.T())); 
       }
 
       //FIXME: Make sure TEveTrackPropagator does not propagate to end of bounds.  Using kDecay may not be physically correct in many cases, but it does what we
@@ -69,14 +71,19 @@ namespace eved
       TEveVectorT<double> pos, mom;
       pos.Set(track.EndPosition().Vect());
       mom.Set(track.EndMomentum().Vect());
-      retVal->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay, pos, mom, track.EndPosition().T())); //we could also put a time value here if available
+      retVal->AddPathMark(TEvePathMarkD(TEvePathMarkD::kDecay, pos, mom, track.EndPosition().T())); 
       
       retVal->MakeTrack();
+      auto P0 = traj.begin()->second;
+      auto R0 = traj.begin()->first;
+      retVal->SetTitle(("simb::MCParticle\n PDG Code="+std::to_string(track.PdgCode())+", process= "+track.Process()+", end process= "+track.EndProcess()+
+                        "\nP0=("+std::to_string(P0.X())+","+std::to_string(P0.Y())+","+std::to_string(P0.Z())+")[GeV/c]\nR0=("+std::to_string(R0.X())+"[cm],"
+                        +std::to_string(R0.Y())+","+std::to_string(R0.Z())+")\nT0="+std::to_string(R0.T())+"[s?], E0="+std::to_string(P0.E())+"[GeV]").c_str());
       retVal->SetMainColor(evd::Style::ColorFromPDG(track.PdgCode()));  
       retVal->SetMarkerStyle(1); //fcl parameters?
       retVal->SetMarkerColor(evd::Style::ColorFromPDG(track.PdgCode()));
       
-      retVal->SetRnrPoints(kTRUE); //From CMS example with multiple points
+      retVal->SetRnrPoints(kFALSE); 
 
       return (TEveElement*)retVal;
     } 

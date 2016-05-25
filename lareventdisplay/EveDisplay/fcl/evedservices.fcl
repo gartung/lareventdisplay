@@ -19,6 +19,7 @@ simpartmaker:
 {
   service_provider: "SimPartMaker"
   DataLabel:   "largeant"
+  MinE:        0.1 #in GeV
 }
 
 tpc3dviewer:

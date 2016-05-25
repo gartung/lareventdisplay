@@ -21,12 +21,12 @@ namespace eved
   class SimPartMaker: public VisMakerInt<simb::MCParticle>
   {
     public:
-      SimPartMaker(const fhicl::ParameterSet& p, art::ActivityRegistry &reg): VisMakerInt<simb::MCParticle>(p, reg) {}
+      SimPartMaker(const fhicl::ParameterSet& p, art::ActivityRegistry &reg): VisMakerInt<simb::MCParticle>(p, reg), fMinE(-1) { reconfigure(p); }
       ~SimPartMaker() = default;
   
       TEveElement* MakeVis(const simb::MCParticle& track); //implementation of pure virtual function
 
-      void reconfigure(fhicl::ParameterSet const & p);
+      void reconfigure(fhicl::ParameterSet const & p) override;
 
       bool SelectDataProduct(const simb::MCParticle& track) override;
     private:

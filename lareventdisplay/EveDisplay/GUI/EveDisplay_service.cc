@@ -46,7 +46,8 @@ namespace eved
     //TApplication stuff to interrupt state machine taken from EventDisplayBase/EventDisplay_service.cc
     TApplication* app = gROOT->GetApplication();
     
-    fEve->FullRedraw3D(kTRUE); //draw for the current event
+    fEve->Redraw3D(kTRUE);
+    //fEve->FullRedraw3D(kTRUE); //draw for the current event
 
     // Hold here for user input from the GUI...
     app->Run(kTRUE);
