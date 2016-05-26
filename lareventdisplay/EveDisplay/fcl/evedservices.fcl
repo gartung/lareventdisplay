@@ -54,6 +54,22 @@ track3dviewer:
   }
 }
 
+dedxviewer:
+{
+  module_type: "DEdxViewer"
+  dEdxDrawAlg:
+  {
+    dEdxMin: 0
+    dEdxMax: 30
+    NdEdxBins: 100
+    ResRangeMin: 0
+    ResRangeMax: 90
+    NResRangeBins: 100
+    CaloLabel: "calo"
+    Plane: 1
+  } 
+}
+
 std_eved_services:
 {
   EveDisplay: @local::eveddisplayservice
