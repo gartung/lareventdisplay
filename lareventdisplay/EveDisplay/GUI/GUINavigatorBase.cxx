@@ -54,7 +54,7 @@ namespace eved {
     //Much of this function taken from EventDisplayBase/EventDisplay_service.cc
     TApplication* app = gROOT->GetApplication();    
 
-    afterNewEvent(); //For an event display, you will probably want to call some kind of draw function here
+    afterNewEvent(e); //For an event display, you will probably want to call some kind of draw function here
 
     // Hold here for user input from the GUI...
     app->Run(kTRUE);

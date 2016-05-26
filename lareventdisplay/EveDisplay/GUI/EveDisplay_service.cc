@@ -19,6 +19,7 @@
 //ART includes
 #include "art/Framework/IO/Root/RootInput.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
+#include "art/Framework/Principal/Event.h"
 
 namespace eved 
 {
@@ -38,8 +39,10 @@ namespace eved
     //fPSet = new EvePSetGui(fEve->GetBrowser(), info_);
   }
 
-  void EveDisplay::afterNewEvent()
+  void EveDisplay::afterNewEvent(const art::Event& e)
   {
+    fNav->SetRunSubRunEvent(e.id().run(), e.id().subRun(), e.id().event());
+
     //GUINavigatorBase handles interrupting the state machine
     fEve->Redraw3D(kTRUE);
     //fEve->FullRedraw3D(kTRUE); //draw for the current event

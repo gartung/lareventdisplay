@@ -22,42 +22,51 @@ eved::EveNavGui::EveNavGui(TEveBrowser* browse)
   main->SetWindowName("Nav GUI");
   main->SetCleanup(kDeepCleanup);
 
-  fButtonBar = new TGHorizontalFrame(main); //browse);
+  fButtonBar = new TGVerticalFrame(main); //browse);
 
-  fPrev = new TGTextButton(fButtonBar, "Previous", 150);
+  fPrev = new TGTextButton(fButtonBar, "Previous", 500);
   fPrev->SetToolTipText("Go to previous event");
   fPrev->Connect("Clicked()", "eved::EveNavGui", this, "Prev()");
   fButtonBar->AddFrame(fPrev);
 
-  fNext = new TGTextButton(fButtonBar, "Next", 150);
+  fNext = new TGTextButton(fButtonBar, "Next", 500);
   fNext->SetToolTipText("Go to next event");
   fNext->Connect("Clicked()", "eved::EveNavGui", this, "Next()");
   fButtonBar->AddFrame(fNext);
 
-  fReload = new TGTextButton(fButtonBar, "Reload", 150);
+  fReload = new TGTextButton(fButtonBar, "Reload", 500);
   fReload->SetToolTipText("Reload event");
   fReload->Connect("Clicked()", "eved::EveNavGui", this, "Reload()");
   fButtonBar->AddFrame(fReload);
 
-  fGoTo = new TGTextButton(fButtonBar, "GoTo", 150);
+  fGoTo = new TGTextButton(fButtonBar, "GoTo", 500);
   fGoTo->SetToolTipText("Goto event");
   fGoTo->Connect("Clicked()", "eved::EveNavGui", this, "GoTo()");
   fButtonBar->AddFrame(fGoTo);
 
+  fRunLabel = new TGLabel(fButtonBar, new TGHotString("[Run]"));
+  fButtonBar->AddFrame(fRunLabel);  
+
   fRun = new TGTextEntry(fButtonBar, new TGTextBuffer(128));
   fRun->Connect("ReturnPressed()", "eved::EveNavGui", this, "GoTo()");
-  fRun->Resize(75, 20);
+  fRun->Resize(500, 20);
   fButtonBar->AddFrame(fRun);
+
+  fSubRunLabel = new TGLabel(fButtonBar, new TGHotString("[SubRun]"));
+  fButtonBar->AddFrame(fSubRunLabel);
+
+  fSubRun = new TGTextEntry(fButtonBar, new TGTextBuffer(128));
+  fSubRun->Connect("ReturnPressed()", "eved::EveNavGui", this, "GoTo()");
+  fSubRun->Resize(500, 20);
+  fButtonBar->AddFrame(fSubRun);
+
+  fEventLabel = new TGLabel(fButtonBar, new TGHotString("[Event]"));      
+  fButtonBar->AddFrame(fEventLabel);
 
   fEvent = new TGTextEntry(fButtonBar, new TGTextBuffer(128));
   fEvent->Connect("ReturnPressed()", "eved::EveNavGui", this, "GoTo()");
-  fEvent->Resize(75, 20);
+  fEvent->Resize(500, 20);
   fButtonBar->AddFrame(fEvent);
-
-  fRunEventLabel = new TGLabel(fButtonBar, new TGHotString("[Run/Event]"));
-  fButtonBar->AddFrame(fRunEventLabel);
- 
-  //fSubRun here similar to fEvent above
 
   main->AddFrame(fButtonBar);
   main->MapSubwindows();
@@ -77,7 +86,9 @@ eved::EveNavGui::~EveNavGui()
 {
   delete fRun; fRun = nullptr;
   delete fEvent; fEvent = nullptr;
-  delete fRunEventLabel; fRunEventLabel = nullptr;
+  delete fRunLabel; fRunLabel = nullptr;
+  delete fSubRunLabel; fSubRunLabel = nullptr;
+  delete fEventLabel; fEventLabel = nullptr;
   delete fGoTo; fGoTo = nullptr;
   delete fReload; fReload = nullptr;
   delete fNext; fNext = nullptr;
@@ -104,19 +115,14 @@ void eved::EveNavGui::GoTo()
 {
   size_t run = atoi(fRun->GetText());
   size_t event = atoi(fEvent->GetText());
-  //int subrun = atoi(fSubRun->GetText());
-  //Here, you will probably have to rewrite NavState to handle subruns
-  SRNavState::SetTarget(run, 0, event);
+  int subrun = atoi(fSubRun->GetText());
+  SRNavState::SetTarget(run, subrun, event);
   SRNavState::Set(sr_nav_states::kGOTO_EVENT);
 }
 
-void eved::EveNavGui::SetRunEvent(int run, int event)
+void eved::EveNavGui::SetRunSubRunEvent(size_t run, size_t subrun, size_t event)
 {
-  char runtxt[128];
-  char evttxt[128];
-  
-  sprintf(runtxt, "%d", run);
-  sprintf(evttxt, "%d", event); //should probably replace these with "modern" versions
-  fRun->SetText(runtxt);
-  fEvent->SetText(evttxt);
+  fRun->SetText(std::to_string(run).c_str());
+  fEvent->SetText(std::to_string(event).c_str());
+  fSubRun->SetText(std::to_string(subrun).c_str());
 }

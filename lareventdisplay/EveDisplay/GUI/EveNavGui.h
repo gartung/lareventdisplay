@@ -38,11 +38,11 @@ class eved::EveNavGui: public TObject
     void Reload();
     void GoTo();
 
-    void SetRunEvent(int run, int event);
+    void SetRunSubRunEvent(size_t run, size_t subrun, size_t event);
 
   private:
     //GUI elements from ROOT
-    TGHorizontalFrame* fButtonBar;
+    TGVerticalFrame* fButtonBar;
     //TGLayoutHints* fLayout;
     
     //Navigation buttons
@@ -53,9 +53,11 @@ class eved::EveNavGui: public TObject
 
     TGTextEntry*  fEvent;
     TGTextEntry*  fRun;
-    //TGTextEntry* fSubRun; //need to implement this later
+    TGTextEntry* fSubRun; 
 
-    TGLabel* fRunEventLabel;
+    TGLabel* fRunLabel;
+    TGLabel* fSubRunLabel;
+    TGLabel* fEventLabel;
 
   ClassDef(EveNavGui, 0); //Needed for ROOT to recognize this class
 };

@@ -10,6 +10,7 @@
 //Art includes
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "art/Framework/Principal/Event.h"
 
 //ROOT includes
 #include "TEveManager.h"
@@ -36,7 +37,7 @@ namespace eved
 
       //Event navigation methods
 
-      void afterNewEvent() override; 
+      void afterNewEvent(const art::Event& e) override; 
 
       TEveManager* getEve() { return fEve; } //How do I prevent users from keeping this pointer?  Check Geometry service provider
 

@@ -8,9 +8,12 @@
 
 #ifndef __CINT__
 
+//ART includes
+#include "art/Framework/Principal/Event.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 
+//c++ includes
 #include <vector>
 #include <string>
 
@@ -28,7 +31,7 @@ namespace eved {
 
     // must be supplied by user, called when we want to tell the derived
     // service to update its GUI after processing a new event.  
-    virtual void afterNewEvent() = 0;
+    virtual void afterNewEvent(art::Event const & ev) = 0;
 
   private:
     void preEvent(art::Event const & ev);
