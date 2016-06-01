@@ -33,6 +33,7 @@ namespace eved
       double fMinE; //Minimum particle energy to be drawn in GeV
       double fMaxR; //Maximum radius for track drawing.  Default is half-diagonal of world volume
       double fMaxZ; //Maximum z length for track drawing.  Default is half-length of world volume
+      std::vector<int> fPDGsToSkip; //Skip particles with these PDG codes when drawing
   };
 }
 

@@ -22,6 +22,9 @@
 #include "TLorentzVector.h"
 #include "TEveVSDStructs.h" //because I haven't yet found a way to set a track's vertex without this
 
+//c++ includes
+#include <algorithm> //for std::find
+
 #ifndef EVED_SIMPARTMAKER_SERVICE_CC
 #define EVED_SIMPARTMAKER_SERVICE_CC
 
@@ -39,13 +42,14 @@ namespace eved
 
       fMaxR = p.get<double>("MaxR", rMax); //in mm
       fMaxZ = p.get<double>("MaxZ", (zhi-zlo)*10./2.); //in mm; multiply default value by 10 to get mm from geometry service's cm
+      fPDGsToSkip = p.get<std::vector<int>>("PDGsToSkip");
       mf::LogWarning("SimPartMaker") << "In reconfigure, MinE is " << fMinE << ", fMaxR is " << fMaxR << ", and fMaxZ is " << fMaxZ << ".\n";
     }
 
     bool eved::SimPartMaker::SelectDataProduct(const simb::MCParticle& part)
     {
       mf::LogWarning("SimPartMaker") << "In SelectDataProduct, MinE is " << fMinE << " and particle E0 is " << part.Trajectory().begin()->second.E() << "\n";
-      return (part.Trajectory().begin()->second.E()>fMinE)&&(part.PdgCode() < 1e4); //simb::MCParticle energy values are in GeV
+      return (part.Trajectory().begin()->second.E()>fMinE)&&(part.PdgCode() < 1e4)&&(std::find(fPDGsToSkip.begin(), fPDGsToSkip.end(), part.PdgCode()) == fPDGsToSkip.end()); //simb::MCParticle energy values are in GeV
     }
 
     TEveElement* eved::SimPartMaker::MakeVis(const simb::MCParticle& track) //implementation of pure virtual function

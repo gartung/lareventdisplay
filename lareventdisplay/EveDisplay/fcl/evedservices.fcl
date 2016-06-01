@@ -20,6 +20,8 @@ simpartmaker:
   service_provider: "SimPartMaker"
   DataLabel:   "largeant"
   MinE:        0.1 #in GeV
+  PDGsToSkip: [2112] #don't draw pesky neutrons! Set this parameter to [] to draw everything.  Note that anything with PDG code > 10^4 is hard-coded not to 
+                     #be drawn because ROOT's PDG database apparently can't handle nuclear fragments (or you get Rootinos and seg faults).  
 }
 
 tpc3dviewer:

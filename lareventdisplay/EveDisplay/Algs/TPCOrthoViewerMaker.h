@@ -168,7 +168,7 @@ eved::TPCOrthoViewerMaker<NAME, ALGS...>::TPCOrthoViewerMaker(fhicl::ParameterSe
   glxzviewer->SetCurrentCamera(TGLViewer::kCameraOrthoXOZ);
   glxzviewer->CurrentCamera().Setup(tpcBox, kFALSE);
   glxzviewer->SetOrthoCamera(TGLViewer::kCameraOrthoXOZ, 4, 0, centerArr, 0, 0);
-  glxzviewer->CurrentCamera().SetCenterVecWarp(centerArr[0], centerArr[1], centerArr[2]);
+  glxzviewer->CurrentCamera().SetFixDefCenterVec(centerArr[0], centerArr[1], centerArr[2]);
   left->AddFrame(glxzviewer->GetFrame(), new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
   fXZViewer = new TEveViewer("OrthoXZViewer", ("Orthographic XZ Viewer for TPC "+std::to_string(fTPCID.TPC)+" Cryostat "+std::to_string(fTPCID.Cryostat)).c_str() );
   fXZViewer->SetGLViewer(glxzviewer, glxzviewer->GetFrame());
@@ -185,7 +185,7 @@ eved::TPCOrthoViewerMaker<NAME, ALGS...>::TPCOrthoViewerMaker(fhicl::ParameterSe
   auto glyzviewer = new TGLEmbeddedViewer(right, fPad);
   glyzviewer->SetOrthoCamera(TGLViewer::kCameraOrthoZOY, 2.5, 0, centerArr, 0, 0);
   glyzviewer->SetCurrentCamera(TGLViewer::kCameraOrthoZOY);
-  glyzviewer->CurrentCamera().SetCenterVecWarp(centerArr[0], centerArr[1], centerArr[2]);
+  glyzviewer->CurrentCamera().SetFixDefCenterVec(centerArr[0], centerArr[1], centerArr[2]);
   right->AddFrame(glyzviewer->GetFrame(), new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
   fYZViewer = new TEveViewer("OrthoYZViewer", ("Orthographic YZ Viewer for TPC "+std::to_string(fTPCID.TPC)+" Cryostat "+std::to_string(fTPCID.Cryostat)).c_str());
   fYZViewer->SetGLViewer(glyzviewer, glyzviewer->GetFrame());
