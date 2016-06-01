@@ -27,6 +27,7 @@ namespace eved
       TEveElement* MakeVis(const recob::Track& track); //implementation of pure virtual function
 
       void reconfigure(fhicl::ParameterSet const & p);
+
   };
 }
 

@@ -5,6 +5,9 @@
 #include "TEveManager.h"
 #include "TROOT.h"
 #include "TApplication.h"
+#include "TGTextEdit.h"
+#include "TGFrame.h"
+#include "TEveWindow.h"
 
 //nutools includes
 #include "EventDisplayBase/NavState.h"
@@ -36,6 +39,16 @@ namespace eved
     }
 
     fNav = new EveNavGui(fEve->GetBrowser());
+
+    //fFclEdit = new TGTextEdit(TEveWindow::CreateWindowInTab(fEve->GetBrowser()->GetTabRight())->GetGUIFrame()); //can add text line-by-line to this widget
+    fEve->GetBrowser()->SanitizeTabCounts();
+
+    fEve->GetBrowser()->GetMainFrame()->Connect("CloseWindow()", "TApplication", gROOT->GetApplication(), "Terminate()"); //end the event display application
+                                                                                                                          //when EVE is asked to close its 
+                                                                                                                          //main window. 
+
+    //fEve->GetBrowser()->RemoveTab(TRootBrowser::kBottom, 0);
+
     //fPSet = new EvePSetGui(fEve->GetBrowser(), info_);
   }
 
@@ -44,7 +57,7 @@ namespace eved
     fNav->SetRunSubRunEvent(e.id().run(), e.id().subRun(), e.id().event());
 
     //GUINavigatorBase handles interrupting the state machine
-    fEve->Redraw3D(kTRUE);
+    fEve->Redraw3D(kFALSE);
     //fEve->FullRedraw3D(kTRUE); //draw for the current event
   }
  

@@ -64,8 +64,9 @@ namespace eved
 
   void SimpleGeoMaker::reconfigure(const fhicl::ParameterSet& p)
   {
-    fGeoTrans = p.get<double>("GeoTrans", 70);
-    fGeoColor = p.get<short>("GeoColor", kBlue);
+    auto pset = p.get<fhicl::ParameterSet>("SimpleGeo");
+    fGeoTrans = pset.get<double>("GeoTrans", 70);
+    fGeoColor = pset.get<short>("GeoColor", kBlue);
   }
 
   void SimpleGeoMaker::makeEvent(const art::Event&)

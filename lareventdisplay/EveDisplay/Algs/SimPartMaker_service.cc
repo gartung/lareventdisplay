@@ -6,12 +6,14 @@
 #include "cetlib/exception.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "fhiclcpp/ParameterSet.h"
+#include "art/Framework/Services/Registry/ServiceHandle.h"
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/SimPartMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/SimPartMakerInt.h"
 #include "SimulationBase/MCParticle.h"
 #include "lareventdisplay/EventDisplay/Style.h"
+#include "larcore/Geometry/Geometry.h"
 
 //ROOT includes
 #include "TEveTrack.h"
@@ -29,7 +31,15 @@ namespace eved
     void eved::SimPartMaker::reconfigure(const fhicl::ParameterSet& p)
     {
       fMinE = p.get<double>("MinE"); //in GeV
-      mf::LogWarning("SimPartMaker") << "In reconfigure, MinE is " << fMinE << "\n";
+
+      art::ServiceHandle<geo::Geometry> geom;
+      double xlo(0), xhi(0), ylo(0), yhi(0), zlo(0), zhi(0);
+      geom->WorldBox(&xlo, &xhi, &ylo, &yhi, &zlo, &zhi);
+      double rMax = std::sqrt((xhi-xlo)*(xhi-xlo)+(yhi-ylo)*(yhi-ylo))*10./2.; //multiply by 10 to get mm instead of geometry service's cm
+
+      fMaxR = p.get<double>("MaxR", rMax); //in mm
+      fMaxZ = p.get<double>("MaxZ", (zhi-zlo)*10./2.); //in mm; multiply default value by 10 to get mm from geometry service's cm
+      mf::LogWarning("SimPartMaker") << "In reconfigure, MinE is " << fMinE << ", fMaxR is " << fMaxR << ", and fMaxZ is " << fMaxZ << ".\n";
     }
 
     bool eved::SimPartMaker::SelectDataProduct(const simb::MCParticle& part)
@@ -53,6 +63,8 @@ namespace eved
       vtx.SetStatusCode(track.StatusCode());
  
       auto prop = new TEveTrackPropagator(); //configure track propagator
+      prop->SetMaxR(fMaxR);
+      prop->SetMaxZ(fMaxZ);
       prop->SetMagField(0.); //Get this from LArSoft mag field service?  I don't know whether there is a default version.  If not, this line would 
                              //cause trouble for experiments without mag field service implementations.
 

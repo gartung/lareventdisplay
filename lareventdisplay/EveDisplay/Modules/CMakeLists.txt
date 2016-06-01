@@ -63,7 +63,7 @@ simple_plugin( Geo3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( Track3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( Sim3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( DEdxViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
-
+simple_plugin( TPCOrthoViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 
 install_headers()
 install_fhicl()

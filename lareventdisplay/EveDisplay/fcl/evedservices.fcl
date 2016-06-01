@@ -31,6 +31,40 @@ tpc3dviewer:
   truth:
   {
   }
+  SimpleGeo:
+  {
+  }
+}
+
+tpcorthoviewer:
+{
+  module_type: "TPCOrthoViewer"
+  reco:
+  {
+    SceneName: "reco"
+  }
+  truth:
+  {
+    SceneName: "truth"
+  }
+  TPCOnlyGeo:
+  {
+    TPCNum: 0
+    CryoNum: 0
+  }
+  TPCNum: 0
+  CryoNum: 0
+}
+
+orthoviewer:
+{
+  module_type: "OrthoViewer"
+  OrthoReco:
+  {
+  }
+  OrthoTruth:
+  {
+  }
 }
 
 sim3dviewer:

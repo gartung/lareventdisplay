@@ -1,6 +1,6 @@
-// \file: GenericSceneMaker.cxx
+// \file: OrthoSceneMaker.cxx
 // \author: Andrew Olivier aoliv23@lsu.edu
-// \brief:  An algorithm to make a basic TEveScene from a list of data products
+// \brief:  An algorithm to make an orthographic TEveScene from a list of data products.  
 
 //Framework includes
 #include "fhiclcpp/ParameterSet.h"
@@ -23,6 +23,7 @@
 #include "TEveScene.h"
 #include "TEveViewer.h"
 #include "TEveElement.h"
+#include "TEveProjectionManager.h"
 
 namespace 
 {
@@ -44,11 +45,11 @@ namespace eved {
   //*NAME: name of this TEveScene in the event display
   
   template <std::string& NAME, class ...PRODS>
-  class GenericSceneMaker
+  class OrthoSceneMaker
   {
     public:
-      GenericSceneMaker();
-      ~GenericSceneMaker() = default;
+      OrthoSceneMaker();
+      ~OrthoSceneMaker() = default;
     
       void initialize();
       void reconfigure(const fhicl::ParameterSet& p);
@@ -58,6 +59,7 @@ namespace eved {
     private:
       std::map<std::string, std::string> fLabels; //map from typeid::name of data product to label
       TEveScene* fScene; //The TEveScene we will create and update
+      TEveProjectionManager* fOrthoMan; //Manager for orthographic projection
 
       template <class TYPE>
       void do_reconfigure(const fhicl::ParameterSet& p) 
@@ -68,23 +70,24 @@ namespace eved {
       template <class TYPE>
       TEveElementList* do_makeEvent(const art::Event& e)
       {
-        mf::LogWarning("GenericSceneMaker") << "Calling do_makeEvent in some version of GenericSceneMaker.\n";
+        mf::LogWarning("OrthoSceneMaker") << "Calling do_makeEvent in some version of OrthoSceneMaker.\n";
         art::ServiceHandle<eved::VisMakerInt<TYPE>> alg;
         TEveElementList* list = new TEveElementList(alg->GetLabel().c_str(), alg->GetLabel().c_str());
         try
         {
           art::Handle<std::vector<TYPE>> prodHand;
           e.getByLabel(alg->GetLabel(), prodHand);
-          mf::LogWarning("GenericSceneMaker") << "Got " << prodHand->size() << " data products for drawing in GenericSceneMaker using label " 
+          mf::LogWarning("OrthoSceneMaker") << "Got " << prodHand->size() << " data products for drawing in OrthoSceneMaker using label " 
                                               << alg->GetLabel() << ".\n";
           for(auto& prod: (*prodHand))
           {
             if(alg->SelectDataProduct(prod))
             {
-              auto el = alg->MakeVis(prod);
+              auto el = fOrthoMan->ImportElements(alg->MakeVis(prod));
+              el->SetElementName((std::string(el->GetElementName())+"Ortho").c_str());
               el->VizDB_Insert(el->GetElementName(), kFALSE, kTRUE);
               list->AddElement(el);
-              mf::LogWarning("GenericSceneMaker") << "Added element " << alg->MakeVis(prod)->GetElementName() << " to TEveElementList " << list->GetName() << ".\n";
+              mf::LogWarning("OrthoSceneMaker") << "Added element " << alg->MakeVis(prod)->GetElementName() << " to TEveElementList " << list->GetName() << ".\n";
             }
           }
         }
@@ -92,7 +95,7 @@ namespace eved {
         {
           //Following from the original LArSoft event display, catch exceptions when getting products since we will probably still want to draw all the other 
           //products.  I think there might be a better way to handle this an an ART setting, but someone will have to look into that later.  
-          mf::LogWarning("GenericSceneMaker") << "Caught exception in do_makeEvent while make scene " << NAME << ": \n" << exc << "\n";
+          mf::LogWarning("OrthoSceneMaker") << "Caught exception in do_makeEvent while make scene " << NAME << ": \n" << exc << "\n";
         }
         return list;
       }
@@ -100,12 +103,12 @@ namespace eved {
   };
   
   template <std::string& NAME, class ...PRODS>
-  eved::GenericSceneMaker<NAME, PRODS...>::GenericSceneMaker()
+  eved::OrthoSceneMaker<NAME, PRODS...>::OrthoSceneMaker(): fScene(nullptr), fOrthoMan(new TEveProjectionManager(TEveProjection::kPT_RPhi))
   {
   }
 
   template <std::string &NAME, class ...PRODS>
-  void eved::GenericSceneMaker<NAME, PRODS...>::reconfigure(const fhicl::ParameterSet& p)
+  void eved::OrthoSceneMaker<NAME, PRODS...>::reconfigure(const fhicl::ParameterSet& p)
   {
     auto pset = p.get<fhicl::ParameterSet>(NAME); //the ParameterSet for this algorithm
     int null[] = {(do_reconfigure<PRODS>(pset), 0)...};
@@ -116,14 +119,14 @@ namespace eved {
   //might be able to use the braced-initialization-list-trick to do something for each template argument.  
 
   template <std::string& NAME, class ...PRODS>
-  void eved::GenericSceneMaker<NAME, PRODS...>::initialize()
+  void eved::OrthoSceneMaker<NAME, PRODS...>::initialize()
   {
   }
 
   template <std::string &NAME, class ...PRODS> 
-  void eved::GenericSceneMaker<NAME, PRODS...>::makeEvent(const art::Event& e)
+  void eved::OrthoSceneMaker<NAME, PRODS...>::makeEvent(const art::Event& e)
   {
-    mf::LogWarning("GenericSceneMaker") << "In GenericSceneMaker::makeEvent, about to fill scene named " << fScene->GetName() << ".\n";
+    mf::LogWarning("OrthoSceneMaker") << "In OrthoSceneMaker::makeEvent, about to fill scene named " << fScene->GetName() << ".\n";
     ::DestroyRecursive(fScene);
     //fScene->DestroyElements(); //get rid of last event's elements    
 
@@ -132,7 +135,7 @@ namespace eved {
   }
 
   template <std::string &NAME, class ...PRODS>
-  TEveScene* eved::GenericSceneMaker<NAME, PRODS...>::makeGlobal()
+  TEveScene* eved::OrthoSceneMaker<NAME, PRODS...>::makeGlobal()
   {
     fScene = art::ServiceHandle<eved::EveDisplay>()->getEve()->SpawnNewScene(NAME.c_str());
     return fScene;

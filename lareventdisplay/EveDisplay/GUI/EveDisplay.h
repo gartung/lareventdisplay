@@ -14,6 +14,7 @@
 
 //ROOT includes
 #include "TEveManager.h"
+#include "TGTextEdit.h"
 
 #ifndef __CINT__
 #include "art/Framework/Services/Registry/ServiceMacros.h"
@@ -47,6 +48,7 @@ namespace eved
       //GUI elements for event navigation and pset editing
       //These go in Eve's left browser area as additional tabs
       EveNavGui* fNav;
+      //TGTextEdit* fFclEdit; //editor for the fcl parameter set if I can get it to work...
       //EvePSetGui* fPSet;
   };
  

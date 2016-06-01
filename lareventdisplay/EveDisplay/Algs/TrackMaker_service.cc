@@ -29,8 +29,6 @@ namespace eved
 
     TEveElement* eved::TrackMaker::MakeVis(const recob::Track& track) //implementation of pure virtual function
     {
-      //TODO: Seg fault on event 7 of reconstructed pion files with only track drawing running.  No problems without recob::Track drawing, so something 
-      //is wrong here. 
       double smallMom = 1e-3; //FIXME: Very small non-zero momentum value so the propagator doesn't freak out.  With 0 momentum, the propagator won't draw.  
       auto vtx = new TEveRecTrackT<double>();
       TEveVectorT<double> vtxPos, small3Mom;
