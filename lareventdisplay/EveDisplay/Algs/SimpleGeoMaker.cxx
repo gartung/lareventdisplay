@@ -198,7 +198,8 @@ namespace eved
 
     //Wire visualization
     //When this functionality is restored, make these children of TPCs?
-    /*for(const auto& wire: geom->IterateWires())
+    /*TEveElementList* wireL = new TEveElementList("wire", "Wires", kTRUE, kTRUE);
+    for(const auto& wire: geom->IterateWires())
     {
       const TGeoVolume* vol = wire.Node()->GetVolume();
       if(vol == nullptr) continue;
@@ -218,9 +219,9 @@ namespace eved
       auto shape = TEveGeoShape::ImportShapeExtract(extract);
       shape->VizDB_Insert(shape->GetName(), kTRUE, kTRUE);
 
-      retVal->AddElement(shape);
-      //art::ServiceHandle<eved::EveDisplay>()->getEve()->AddGlobalElement(shape);
-    }*/
+      wireL->AddElement(shape);
+    }
+    retVal->AddElement(wireL);*/
 
     mf::LogWarning("SimpleGeoMaker") << "Render state of view " << retVal->GetName() << " is " << retVal->GetRnrSelf() << ".  Render children state is " 
                                      << retVal->GetRnrChildren() << ".\n";

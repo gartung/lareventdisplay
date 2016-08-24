@@ -1,0 +1,94 @@
+// \file: RawDigitMaker.h
+// \author: Andrew Olivier aoliv23@lsu.edu
+// \brief: Runtime-choosable algorithm for visualizaing raw::RawDigit in the EVE-based event display.  Implements RawDigitMakerInt.h. 
+
+//Framework includes
+#include "cetlib/exception.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
+#include "fhiclcpp/ParameterSet.h"
+#include "art/Framework/Services/Registry/ServiceHandle.h"
+
+//LArSoft includes
+#include "lareventdisplay/EveDisplay/Algs/RawDigitMaker.h"
+#include "lareventdisplay/EveDisplay/Algs/RawDigitMakerInt.h"
+#include "lardata/RawData/RawDigit.h"
+#include "lareventdisplay/EventDisplay/Style.h"
+#include "larcore/Geometry/Geometry.h"
+#include "lareventdisplay/EveDisplay/VisElem/TEveWvFrmDigit.h"
+
+//ROOT includes
+#include "TEveElement.h"
+#include "TGeoNode.h"
+
+#ifndef EVED_RAWDIGITMAKER_SERVICE_CC
+#define EVED_RAWDIGITMAKER_SERVICE_CC
+
+namespace //helper functions
+{
+  template <class T> //It turns out that, although the LArSoft geometry service does not use a base class, all LArSoft geometry classes have LocalToWorld 
+                     //methods.  Time to take advantage of this fact...
+  void GetEulerAngles(const T& det, double& theta, double& phi, double& psi, double& centerX, double& centerY, double& centerZ) //return angles and center by reference
+  {
+    double center[3] = {0, 0, 0}, local[3] = {0, 0, 0};
+    det.LocalToWorld(local, center);
+    double x[3] = {1, 0, 0}, y[3] = {0, 1, 0}, z[3] = {0, 0, 1}, gX[3] = {0}, gY[3] = {0}, gZ[3] = {0};
+  
+    det.LocalToWorldVect(x, gX);
+    det.LocalToWorldVect(y, gY);
+    det.LocalToWorldVect(z, gZ);
+    
+    theta = std::atan2(gZ[0], -gZ[1]);
+    psi = std::atan2(gX[2], gY[2]);
+    phi = std::atan2(gZ[0], std::sin(theta)*gZ[2]);
+    
+    centerX = center[0];
+    centerY = center[1];
+    centerZ = center[2];
+    
+    return;
+  }
+}
+
+namespace eved
+{
+
+    void eved::RawDigitMaker::reconfigure(const fhicl::ParameterSet& p)
+    {
+    }
+
+    TEveElement* eved::RawDigitMaker::MakeVis(const raw::RawDigit& digit) //implementation of pure virtual function
+    {
+      art::ServiceHandle<geo::Geometry> geom;
+
+      auto wires = geom->ChannelToWire(digit.Channel());
+      if(wires.size() > 1) throw cet::exception("Disambig") << "Got " << wires.size() << " for channel " << digit.Channel() << ".  You will need to "
+                                                            << "implement your own digit drawer that handles disambiguation.\n";
+  
+      auto wireID = wires[0]; //I think the geometry service would have thrown long before this if we couldn't find any wires at all. 
+      auto wire = geom->Wire(wireID);
+      auto vol = wire.Node()->GetVolume();
+      auto wvfrm = digit.ADCs();
+
+      double x, y, z, theta, phi, psi;
+      ::GetEulerAngles(wire, x, y, z, theta, phi, psi);
+
+      std::string name("Channel ");
+      name += std::to_string(digit.Channel());
+      std::string title("raw::RawDigit\n"+name+"\nADC size: "+std::to_string(wvfrm.size()));
+
+      auto retVal = new vis::TEveWvFrmDigit(name.c_str(), title.c_str(), vol, x, y, z, theta, phi, psi, wvfrm);
+
+      retVal->SetMainColor(kRed); //temporary dummy value
+      retVal->SetMainTransparency(50);
+      retVal->SetTitle(title.c_str());
+      retVal->VizDB_Insert(retVal->GetName(), kTRUE, kTRUE);
+      retVal->SetDrawFrame(kTRUE);
+
+      return (TEveElement*)retVal;
+    } 
+    
+}
+
+DEFINE_ART_SERVICE_INTERFACE_IMPL(eved::RawDigitMaker, eved::VisMakerInt<raw::RawDigit>)
+
+#endif

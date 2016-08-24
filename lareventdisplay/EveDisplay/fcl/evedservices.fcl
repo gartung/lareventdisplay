@@ -24,6 +24,15 @@ simpartmaker:
                      #be drawn because ROOT's PDG database apparently can't handle nuclear fragments (or you get Rootinos and seg faults).  
 }
 
+rawdigitmaker:
+{
+  service_provider: "RawDigitMaker"
+  DataLabel: "daq"
+  MinSignal: 5. #0
+  MaxSignal: 50.
+  ADCCut: 5.
+}
+
 tpc3dviewer:
 {
   module_type: "TPC3DViewer"
@@ -41,6 +50,30 @@ tpc3dviewer:
 tpcorthoviewer:
 {
   module_type: "TPCOrthoViewer"
+  reco:
+  {
+    SceneName: "reco"
+  }
+  truth:
+  {
+    SceneName: "truth"
+  }
+  TPCOnlyGeo:
+  {
+    TPCNum: 0
+    CryoNum: 0
+  }
+  TPCNum: 0
+  CryoNum: 0
+}
+
+rawdigittestviewer:
+{
+  module_type: "RawDigitTestViewer"
+  raw:
+  {
+    SceneName: "raw"
+  }
   reco:
   {
     SceneName: "reco"
@@ -106,11 +139,143 @@ dedxviewer:
   } 
 }
 
+recoconstructor:
+{
+  module_type: "RecoConstructor"
+  Reco:
+  {
+  }
+}
+
+recotwqconstructor:
+{
+  module_type: "RecoTWQConstructor"
+  Reco:
+  {
+  }
+}
+
+truthconstructor:
+{
+  module_type: "TruthConstructor"
+  Truth:
+  {
+  }
+}
+
+truthtwqconstructor:
+{
+  module_type: "TruthTWQConstructor"
+  Truth:
+  {
+  }
+}
+
+geoconstructor:
+{
+  module_type: "GeoConstructor"
+  SimpleGeo:
+  {
+  }
+}
+
+tpc3dconstructor:
+{
+  module_type: "TPC3DConstructor"
+  Name: "3D"
+  Viewer:
+  {
+    ViewerName: "3D"
+    SceneNames: [ "Reco", "Truth", "geo" ]
+  }
+}
+
+tpcorthogeoconstructor:
+{
+  module_type: "TPCOrthoGeoConstructor"
+  TPCOnlyGeo:
+  {
+    TPCNum: 0
+    CryoNum: 0
+  }
+}
+
+tpcorthodefaultconstructor:
+{
+  module_type: "TPCOrthoConstructor"
+  Name: "Ortho"
+  Viewer:
+  {
+    ViewerName: "Ortho"
+    SceneNames: [ "Reco", "Truth", "TPCOnly" ]
+    TPCNum: 0
+    CryoNum: 0
+  }
+}
+
+twqgeo:
+{
+  module_type: "TWQGeoConstructor"
+  TWQGeo:
+  {
+    TPCNum: 0
+    CryoNum: 0
+  }
+} 
+
+tpctwqconstructor:
+{
+  module_type: "TPCTWQConstructor"
+  Name: "TWQ"
+
+  Viewer:
+  {
+    TPCNum: 0
+    CryoNum: 0
+
+    Viewer0:
+    {
+      ViewerName: "U Plane"
+      SceneNames: [ "Raw0", "Truth0", "Reco0", "TWQGeo0" ]
+    }
+  
+    Viewer1:
+    {
+      ViewerName: "V Plane"
+      SceneNames: [ "Raw1", "Truth1", "Reco1", "TWQGeo1" ]
+    }
+  }
+}
+
+rawconstructor:
+{
+  module_type: "RawConstructor"
+
+  Raw:
+  {
+  }
+}
+
+geoconfig:
+{
+  TPC: 0
+  Cryo: 0
+}
+
+coordconfig:
+{
+  Width: 1400
+  Height: 500
+}
+
 std_eved_services:
 {
   EveDisplay: @local::eveddisplayservice
   TrackMakerInt: @local::trackmaker
   SimPartMakerInt: @local::simpartmaker
+  RawDigitMakerInt: @local::rawdigitmaker
+  GeoConfig: @local::geoconfig
+  CoordConfig: @local::coordconfig
 }
 
 standard_colordrawingopt:

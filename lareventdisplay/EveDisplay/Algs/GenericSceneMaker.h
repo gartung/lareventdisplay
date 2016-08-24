@@ -13,6 +13,7 @@
 #include "lareventdisplay/EveDisplay/Algs/VisMakerInt.h"
 //#include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
 #include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
+#include "lareventdisplay/EveDisplay/Algs/DestroyRecursive.h"
 
 //c++ includes
 #include <vector>
@@ -23,19 +24,6 @@
 #include "TEveScene.h"
 #include "TEveViewer.h"
 #include "TEveElement.h"
-
-namespace 
-{
-  void DestroyRecursive(TEveElement* el)
-  {
-    for(auto child = el->BeginChildren(); child != el->EndChildren(); ++child)
-    {
-      DestroyRecursive(*child);
-    }
-    el->DestroyElements();
-    return;
-  }
-}
 
 namespace eved {
 
@@ -56,7 +44,6 @@ namespace eved {
       TEveScene* makeGlobal();
 
     private:
-      std::map<std::string, std::string> fLabels; //map from typeid::name of data product to label
       TEveScene* fScene; //The TEveScene we will create and update
 
       template <class TYPE>
@@ -75,16 +62,19 @@ namespace eved {
         {
           art::Handle<std::vector<TYPE>> prodHand;
           e.getByLabel(alg->GetLabel(), prodHand);
-          mf::LogWarning("GenericSceneMaker") << "Got " << prodHand->size() << " data products for drawing in GenericSceneMaker using label " 
-                                              << alg->GetLabel() << ".\n";
+          //mf::LogWarning("GenericSceneMaker") << "Got " << prodHand->size() << " data products for drawing in GenericSceneMaker using label " 
+          //                                    << alg->GetLabel() << ".\n";
           for(auto& prod: (*prodHand))
           {
             if(alg->SelectDataProduct(prod))
             {
               auto el = alg->MakeVis(prod);
-              el->VizDB_Insert(el->GetElementName(), kFALSE, kTRUE);
-              list->AddElement(el);
-              mf::LogWarning("GenericSceneMaker") << "Added element " << alg->MakeVis(prod)->GetElementName() << " to TEveElementList " << list->GetName() << ".\n";
+              if(el != nullptr)
+              {
+                el->VizDB_Insert(el->GetElementName(), kFALSE, kTRUE);
+                list->AddElement(el);
+                //mf::LogWarning("GenericSceneMaker") << "Added element " << alg->MakeVis(prod)->GetElementName() << " to TEveElementList " << list->GetName() << ".\n";
+              }
             }
           }
         }
@@ -124,8 +114,7 @@ namespace eved {
   void eved::GenericSceneMaker<NAME, PRODS...>::makeEvent(const art::Event& e)
   {
     mf::LogWarning("GenericSceneMaker") << "In GenericSceneMaker::makeEvent, about to fill scene named " << fScene->GetName() << ".\n";
-    ::DestroyRecursive(fScene);
-    //fScene->DestroyElements(); //get rid of last event's elements    
+    DestroyRecursive(fScene);
 
     int null[] = {0, (fScene->AddElement(do_makeEvent<PRODS>(e)), 0)..., 0};
     (void)null; //supposedly so that null appears to be used to the compiler without actually generating any code

@@ -13,6 +13,7 @@
 #include "lareventdisplay/EveDisplay/Algs/VisMakerInt.h"
 //#include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
 #include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
+#include "lareventdisplay/EveDisplay/Algs/DestroyRecursive.h"
 
 //c++ includes
 #include <vector>
@@ -24,19 +25,6 @@
 #include "TEveViewer.h"
 #include "TEveElement.h"
 #include "TEveProjectionManager.h"
-
-namespace 
-{
-  void DestroyRecursive(TEveElement* el)
-  {
-    for(auto child = el->BeginChildren(); child != el->EndChildren(); ++child)
-    {
-      DestroyRecursive(*child);
-    }
-    el->DestroyElements();
-    return;
-  }
-}
 
 namespace eved {
 
@@ -127,7 +115,7 @@ namespace eved {
   void eved::OrthoSceneMaker<NAME, PRODS...>::makeEvent(const art::Event& e)
   {
     mf::LogWarning("OrthoSceneMaker") << "In OrthoSceneMaker::makeEvent, about to fill scene named " << fScene->GetName() << ".\n";
-    ::DestroyRecursive(fScene);
+    DestroyRecursive(fScene);
     //fScene->DestroyElements(); //get rid of last event's elements    
 
     int null[] = {0, (fScene->AddElement(do_makeEvent<PRODS>(e)), 0)..., 0};

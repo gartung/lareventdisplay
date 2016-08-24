@@ -24,19 +24,6 @@
 #include "TEveViewer.h"
 #include "TEveElement.h"
 
-/*namespace 
-{
-  void DestroyRecursive(TEveElement* el)
-  {
-    for(auto child = el->BeginChildren(); child != el->EndChildren(); ++child)
-    {
-      DestroyRecursive(*child);
-    }
-    el->DestroyElements();
-    return;
-  }
-}*/
-
 namespace eved {
 
   template<std::string& NAME>
@@ -44,14 +31,14 @@ namespace eved {
   {
     public:
       CopySceneMaker();
-      ~CopySceneMaker() = default;
+      virtual ~CopySceneMaker() = default;
     
-      void initialize();
-      void reconfigure(const fhicl::ParameterSet& p);
-      void makeEvent(const art::Event& e);
-      TEveScene* makeGlobal();
+      virtual void initialize();
+      virtual void reconfigure(const fhicl::ParameterSet& p);
+      virtual void makeEvent(const art::Event& e);
+      virtual TEveScene* makeGlobal();
 
-    private:
+    protected:
       std::string fSceneName; //Name of the scene to copy
       TEveScene* fScene; //The TEveScene we will create and update
   };
@@ -87,7 +74,6 @@ namespace eved {
     {
       throw cet::exception("BadSceneName") << "Could not find scene with name " << fSceneName << " in CopySceneMaker::makeGlobal().\n";
     }
-    //fScene->IncDenyDestroy();
     return fScene;
   }
 

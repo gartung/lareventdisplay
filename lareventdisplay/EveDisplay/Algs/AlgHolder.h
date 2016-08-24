@@ -13,6 +13,9 @@
 //c++ include
 #include <memory>
 
+#ifndef ALGS_ALGHOLDER_H
+#define ALGS_ALGHOLDER_H
+
 namespace eved
 {
   template <typename ALG>
@@ -25,3 +28,5 @@ namespace eved
       std::unique_ptr<ALG> fAlg;
   };
 }
+
+#endif

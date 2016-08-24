@@ -8,6 +8,11 @@
 #include "TGTextEdit.h"
 #include "TGFrame.h"
 #include "TEveWindow.h"
+#include "TGWindow.h"
+#include "TGFileBrowser.h"
+#include "TGListTree.h"
+#include "TFile.h"
+#include "TGTab.h"
 
 //nutools includes
 #include "EventDisplayBase/NavState.h"
@@ -22,7 +27,15 @@
 //ART includes
 #include "art/Framework/IO/Root/RootInput.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
+#include "fhiclcpp/ParameterSetRegistry.h"
 #include "art/Framework/Principal/Event.h"
+#include "art/Framework/Services/Optional/TFileService.h"
+#include "art/Framework/Services/Registry/ServiceHandle.h"
+#include "art/Framework/Principal/Worker.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
+#include "art/Persistency/Provenance/ModuleDescription.h"
+
+//TODO: Either remove all event dipslay modules when the EVE window is closed (ideal) or force the ART job to finish.  
 
 namespace eved 
 {
@@ -35,12 +48,29 @@ namespace eved
     }
     else
     {
-      fEve = TEveManager::Create(kTRUE, "FI"); //we will create viewers ourselves
+      fEve = TEveManager::Create(kTRUE, "I"); //we will create viewers and file browser ourselves
     }
 
     fNav = new EveNavGui(fEve->GetBrowser());
+    
+    //Make our own "custom" file browser that browses the TFileSiervice's histograms.  
+    auto eBrowse = fEve->GetBrowser();
+    eBrowse->StartEmbedding(TRootBrowser::kLeft);
+    auto fileBrowse = fEve->GetBrowser()->MakeFileBrowser(kTRUE);
+    eBrowse->StopEmbedding("TFileService");
+    auto file = &(art::ServiceHandle<art::TFileService>()->file());
+    fileBrowse->BrowseObj(file);
 
-    //fFclEdit = new TGTextEdit(TEveWindow::CreateWindowInTab(fEve->GetBrowser()->GetTabRight())->GetGUIFrame()); //can add text line-by-line to this widget
+    //ParameterSet editor
+    //eBrowse->StartEmbedding(TRootBrowser::kLeft);
+    auto leftTab = eBrowse->GetTabLeft();
+    fPSetEdit = new PSetLTFrame(leftTab); 
+    leftTab->AddTab("ParameterSets", fPSetEdit);
+    leftTab->MapSubwindows();
+    leftTab->Resize();
+    leftTab->MapWindow();
+    //eBrowse->StopEmbedding("ParameterSets");
+
     fEve->GetBrowser()->SanitizeTabCounts();
 
     fEve->GetBrowser()->GetMainFrame()->Connect("CloseWindow()", "TApplication", gROOT->GetApplication(), "Terminate()"); //end the event display application
@@ -58,7 +88,58 @@ namespace eved
 
     //GUINavigatorBase handles interrupting the state machine
     fEve->Redraw3D(kFALSE);
-    //fEve->FullRedraw3D(kTRUE); //draw for the current event
+  }
+
+  void EveDisplay::afterBeginJob() //Happens after GUINavigatorBase fills fWorkers
+  {
+    fEve->Redraw3D(kFALSE);
+    auto window = fEve->GetMainWindow();
+    auto client = window->GetClient();
+    fEve->GetMainWindow()->Resize(client->GetDisplayWidth(), client->GetDisplayHeight());
+
+    //Get service configurations for ParameterSet editor.  Learned to do this from EventDisplayBase/ServiceTable.h
+    auto& reg = art::ServiceRegistry::instance();
+    std::vector<fhicl::ParameterSet> psets;
+    reg.presentToken().getParameterSets(psets);
+    for(const auto& pset: psets) //TODO: Understand why I get 2 or 4 of some services here!  Also, understand what the "." parameter set means.
+    {
+      fPSetEdit->AddPSet(pset);
+      /*std::string name;
+      if(pset.get_if_present("service_type", name))
+      {
+        mf::LogWarning("EveDisplay_service") << "Adding a service parameter set named " << name << " to editor\n";
+      }*/
+    }
+
+    //Get worker configurations for ParameterSet editor.  Learned how to do this from art/Framework/Services/UserInteraction/UserInteraction.cc
+    for(const auto worker: fWorkers)
+    {
+      fhicl::ParameterSet pset;
+      fhicl::ParameterSetRegistry::get(worker->description().parameterSetID(), pset);
+      fPSetEdit->AddPSet(pset);
+    }
+
+  }
+
+  void EveDisplay::afterGUIEvent() //Happens just after we get input from the GUI
+  {
+    //Update service and module configurations
+    auto& reg = art::ServiceRegistry::instance();
+    std::vector<fhicl::ParameterSet> psets;
+    auto token = reg.presentToken();
+    token.getParameterSets(psets);
+    for(auto& pset: psets)
+    {
+      fPSetEdit->UpdatePSet(pset);
+    }
+    token.putParameterSets(psets);
+
+    for(auto worker: fWorkers)
+    {
+      fhicl::ParameterSet pset;
+      fhicl::ParameterSetRegistry::get(worker->description().parameterSetID(), pset);
+      if(fPSetEdit->UpdatePSet(pset)) worker->reconfigure(pset);
+    }
   }
  
 } //end namespace eved

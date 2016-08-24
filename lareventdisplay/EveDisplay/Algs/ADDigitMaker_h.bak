@@ -1,0 +1,38 @@
+// \file: ADDigitMaker.h
+// \author: Andrew Olivier aoliv23@lsu.edu
+// \brief: Runtime-choosable algorithm for visualizaing simb::MCParticle in the EVE-based event display.  Implements ADDigitMakerInt.h. 
+
+//ART includes
+#include "fhiclcpp/ParameterSet.h"
+
+//LArSoft includes
+#include "lareventdisplay/EveDisplay/Algs/ADDigitMakerInt.h"
+#include "lardata/RawData/AuxDetDigit.h"
+
+//ROOT includes
+#include "lareventdisplay/EveDisplay/VisElem/TEveWvFrmDigit.h"
+#include "TEveElement.h"
+
+#ifndef EVED_ADDIGITMAKER_H
+#define EVED_ADDIGITMAKER_H
+
+namespace eved
+{
+  class ADDigitMaker: public VisMakerInt<raw::AuxDetDigit>
+  {
+    public:
+      ADDigitMaker(const fhicl::ParameterSet& p, art::ActivityRegistry &reg): VisMakerInt<raw::AuxDetDigit>(p, reg) { reconfigure(p); }
+      ~ADDigitMaker() = default;
+  
+      TEveElement* MakeVis(const raw::AuxDetDigit& digit); //implementation of pure virtual function
+
+      void reconfigure(fhicl::ParameterSet const & p) override;
+
+      //bool SelectDataProduct(const raw::AuxDetDigit& track) override;
+    //private: //parameters read from fcl go here
+  };
+}
+
+DECLARE_ART_SERVICE_INTERFACE_IMPL(eved::ADDigitMaker, eved::VisMakerInt<simb::MCParticle>, LEGACY)
+
+#endif

@@ -47,7 +47,8 @@ set( EVE_LIBS ${ART_FRAMEWORK_SERVICES_REGISTRY}
               ${ROOT_MATHCORE}
               ${ROOT_THREAD} 
               lareventdisplay_EveDisplay_Algs
-              lareventdisplay_EveDisplay_GUI)
+              lareventdisplay_EveDisplay_GUI
+              lareventdisplay_EveDisplay_Util)
 
 cet_rootcint( ${PACKAGE} )
 
@@ -64,6 +65,20 @@ simple_plugin( Track3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( Sim3DViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( DEdxViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( TPCOrthoViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( RawDigitTestViewer module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( RecoScene module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TWQScene module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TPC3DConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( RecoConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TruthConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( GeoConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TPCOrthoGeoConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TPCOrthoConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TPCTWQConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( RawConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( RecoTWQConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TruthTWQConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TWQGeoConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 
 install_headers()
 install_fhicl()

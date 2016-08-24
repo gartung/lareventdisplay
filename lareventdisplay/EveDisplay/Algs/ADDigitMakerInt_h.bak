@@ -1,0 +1,14 @@
+// \file: SimPartMakerInt.h
+// \author: Andrew Olivier aoliv23@lsu.edu
+// \brief: declares an ART service interface for an algorithm that will draw AuxDetDigits
+
+//LArSoft includes
+#include "lareventdisplay/EveDisplay/Algs/VisMakerInt.h"
+#include "lardata/RawData/AuxDetDigit.h"
+
+#ifndef EVED_ADDIGITMAKERINT_H
+#define EVED_ADDIGITMAKERINT_H
+
+DECLARE_ART_SERVICE_INTERFACE(eved::VisMakerInt<raw::AuxDetDigit>, LEGACY)
+
+#endif

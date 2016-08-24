@@ -46,7 +46,10 @@ set( EVE_LIBS ${ART_FRAMEWORK_SERVICES_REGISTRY}
               ${ROOT_PHYSICS}
               ${ROOT_MATHCORE}
               ${ROOT_THREAD} 
-              lareventdisplay_EveDisplay_GUI)
+              lareventdisplay_EveDisplay_GUI
+              lareventdisplay_EveDisplay_VisElem
+              lareventdisplay_EveDisplay_Frames
+              lareventdisplay_EveDisplay_Util)
 
 cet_rootcint( ${PACKAGE} )
 
@@ -59,6 +62,7 @@ art_make_library( LIBRARY_NAME ${PACKAGE}
 set( EVE_SERVICE_LIBS ${PACKAGE} ${EVE_LIBS} )
 simple_plugin( TrackMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( SimPartMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( RawDigitMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 
 install_headers()
 install_fhicl()

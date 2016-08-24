@@ -22,6 +22,7 @@
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/GUI/EveNavGui.h"
 #include "lareventdisplay/EveDisplay/GUI/GUINavigatorBase.h"
+#include "lareventdisplay/EveDisplay/GUI/PSetLTFrame.h"
 //#include "EveDisplay/EvePSetGui.h"
 
 namespace fhicl { class ParameterSet; }
@@ -39,6 +40,8 @@ namespace eved
       //Event navigation methods
 
       void afterNewEvent(const art::Event& e) override; 
+      void afterGUIEvent() override;
+      void afterBeginJob() override;
 
       TEveManager* getEve() { return fEve; } //How do I prevent users from keeping this pointer?  Check Geometry service provider
 
@@ -47,9 +50,8 @@ namespace eved
 
       //GUI elements for event navigation and pset editing
       //These go in Eve's left browser area as additional tabs
-      EveNavGui* fNav;
-      //TGTextEdit* fFclEdit; //editor for the fcl parameter set if I can get it to work...
-      //EvePSetGui* fPSet;
+      EveNavGui* fNav; //Navigation GUI
+      PSetLTFrame* fPSetEdit; //Editor for job configuration.
   };
  
 } //close namespace eved 

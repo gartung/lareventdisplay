@@ -43,6 +43,8 @@ namespace eved {
                                             std::vector<art::Worker *> const & workers)
   {
     input_ = is;
+    fWorkers = workers;
+    afterBeginJob();
   }
 
   void GUINavigatorBase::preEvent(art::Event const &)
@@ -58,6 +60,8 @@ namespace eved {
 
     // Hold here for user input from the GUI...
     app->Run(kTRUE);
+
+    afterGUIEvent();
 
     art::RootInput* rootInput = dynamic_cast<art::RootInput*>(input_);
 

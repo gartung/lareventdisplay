@@ -1,0 +1,57 @@
+// \file: OrthoViewerFrame.h
+// \brief: Holds a TEveViewer in orthographic mode.  Repeatable way to place TEveViewers in other frames.  
+// \author: Andrew Olivier aolivier@ur.rochester.edu
+
+//ART includes
+#ifndef __CINT__
+#include "fhiclcpp/ParameterSet.h"
+#endif
+
+//ROOT includes
+#include "TEveViewer.h"
+#include "TEveScene.h"
+#include "TEveTrack.h"
+#include "TEvePathMark.h"
+#include "TVector3.h"
+#include "TEveVector.h"
+#include "TGLViewer.h"
+#include "TGLEmbeddedViewer.h"
+#include "TGClient.h"
+#include "TGFrame.h"
+#include "TEvePad.h"
+#include "TVector3.h"
+#include "TGSplitFrame.h"
+#include "TGLayout.h"
+#include "TGLBoundingBox.h"
+#include "TGLOrthoCamera.h"
+#include "TGLUtil.h"
+#include "TGLCameraOverlay.h"
+#include "TGLabel.h"
+
+#ifndef FRAMES_ORTHOVIEWERFRAME_H
+#define FRAMES_ORTHOVIEWERFRAME_H
+
+namespace eved
+{
+  class OrthoViewerFrame: public TGCompositeFrame //Composite frame in case I want to add labels or controls later
+  {
+    public:
+      OrthoViewerFrame(const TGWindow* parent);
+      //We don't own any resources, so the default destructor should be OK.  I wonder whether I need to decrement EVE's destruction counter for this viewer...
+
+      #ifndef __CINT__
+      void reconfigure(fhicl::ParameterSet const& p);
+      #endif
+      void RequestScenes();
+      void DeleteAnnotations();
+
+    private:
+      TEveViewer* fViewer; //owned by EVE
+      std::vector<std::string> fSceneNames; //list of scenes we will request from EVE
+
+    public:
+      ClassDef(OrthoViewerFrame, 1);
+  };
+}
+
+#endif

@@ -11,6 +11,7 @@ set( EVE_LIBS ${ART_FRAMEWORK_SERVICES_REGISTRY}
               ${ART_FRAMEWORK_IO_ROOT}
               ${ART_FRAMEWORK_IO_ROOT_ROOTINPUT_SOURCE}
               ${ART_FRAMEWORK_PRINCIPAL}
+              ${ART_FRAMEWORK_SERVICES_OPTIONAL}
               ${ART_FRAMEWORK_SERVICES_USERINTERACTION}
               ${ART_PERSISTENCY_PROVENANCE}
               ${ART_UTILITIES}
@@ -53,6 +54,7 @@ art_make_library( LIBRARY_NAME ${PACKAGE}
                   SOURCE ${src_files} ${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE}Cint.cc
                   LIBRARIES SimulationBase ${EVE_LIBS} 
                   larcore_Geometry
+                  art_Framework_Services_Optional_TFileService_service
                 )
 
 set( EVE_SERVICE_LIBS ${PACKAGE} ${EVE_LIBS} )

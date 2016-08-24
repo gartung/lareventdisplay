@@ -1,0 +1,66 @@
+// \file: ADDigitMaker.h
+// \author: Andrew Olivier aoliv23@lsu.edu
+// \brief: Runtime-choosable algorithm for visualizaing simb::MCParticle in the EVE-based event display.  Implements ADDigitMakerInt.h. 
+
+//Framework includes
+#include "cetlib/exception.h"
+#include "messagefacility/MessageLogger/MessageLogger.h"
+#include "fhiclcpp/ParameterSet.h"
+#include "art/Framework/Services/Registry/ServiceHandle.h"
+
+//LArSoft includes
+#include "lareventdisplay/EveDisplay/Algs/ADDigitMaker.h"
+#include "lareventdisplay/EveDisplay/Algs/ADDigitMakerInt.h"
+#include "SimulationBase/MCParticle.h"
+#include "lareventdisplay/EventDisplay/Style.h"
+#include "larcore/Geometry/Geometry.h"
+
+//ROOT includes
+#include "TEveTrack.h"
+#include "TEveElement.h"
+#include "TEveTrackPropagator.h"
+#include "TLorentzVector.h"
+#include "TEveVSDStructs.h" //because I haven't yet found a way to set a track's vertex without this
+
+//c++ includes
+#include <algorithm> //for std::find
+
+#ifndef EVED_ADDIGITMAKER_SERVICE_CC
+#define EVED_ADDIGITMAKER_SERVICE_CC
+
+namespace eved
+{
+
+    void eved::ADDigitMaker::reconfigure(const fhicl::ParameterSet& p)
+    {
+      /*fMinE = p.get<double>("MinE"); //in GeV
+
+      art::ServiceHandle<geo::Geometry> geom;
+      double xlo(0), xhi(0), ylo(0), yhi(0), zlo(0), zhi(0);
+      geom->WorldBox(&xlo, &xhi, &ylo, &yhi, &zlo, &zhi);
+      double rMax = std::sqrt((xhi-xlo)*(xhi-xlo)+(yhi-ylo)*(yhi-ylo))*10./2.; //multiply by 10 to get mm instead of geometry service's cm
+
+      fMaxR = p.get<double>("MaxR", rMax); //in mm
+      fMaxZ = p.get<double>("MaxZ", (zhi-zlo)*10./2.); //in mm; multiply default value by 10 to get mm from geometry service's cm
+      fPDGsToSkip = p.get<std::vector<int>>("PDGsToSkip");
+      mf::LogWarning("ADDigitMaker") << "In reconfigure, MinE is " << fMinE << ", fMaxR is " << fMaxR << ", and fMaxZ is " << fMaxZ << ".\n";*/
+    }
+
+    /*bool eved::ADDigitMaker::SelectDataProduct(const raw::AuxDetDigit& digit)
+    {
+      mf::LogWarning("ADDigitMaker") << "In SelectDataProduct, MinE is " << fMinE << " and particle E0 is " << part.Trajectory().begin()->second.E() << "\n";
+      return (part.Trajectory().begin()->second.E()>fMinE)&&(part.PdgCode() < 1e4)&&(std::find(fPDGsToSkip.begin(), fPDGsToSkip.end(), part.PdgCode()) == fPDGsToSkip.end()); //simb::MCParticle energy values are in GeV
+    }*/
+
+    TEveElement* eved::ADDigitMaker::MakeVis(const raw::AuxDetDigit& digit) //implementation of pure virtual function
+    {
+      auto retVal = new TEveWvFrmDigit();
+
+      return (TEveElement*)retVal;
+    } 
+    
+}
+
+DEFINE_ART_SERVICE_INTERFACE_IMPL(eved::ADDigitMaker, eved::VisMakerInt<simb::MCParticle>)
+
+#endif

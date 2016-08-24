@@ -53,7 +53,7 @@ namespace eved
                                                                            //It would be nice if we could use something like kLineSegment here, but I haven't 
                                                                            //found a way to stop the track propagator from sending the track out to its 
                                                                            //maximum r/z value yet.  
-        mf::LogWarning("TrackMaker") << "When adding PathMark, position is (" << pos.fX << ", " << pos.fY << ", " << pos.fZ << ")\n";
+        //mf::LogWarning("TrackMaker") << "When adding PathMark, position is (" << pos.fX << ", " << pos.fY << ", " << pos.fZ << ")\n";
       }
 
       //FIXME: Make sure TEveTrackPropagator does not propagate to end of bounds.  Using kDecay may not be physically correct in many cases, but it does what we

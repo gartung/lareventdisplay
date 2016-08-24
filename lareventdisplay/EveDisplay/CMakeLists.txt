@@ -2,4 +2,7 @@ add_subdirectory(GUI)
 add_subdirectory(Algs)
 add_subdirectory(Modules)
 add_subdirectory(fcl)
-
+add_subdirectory(VisElem)
+add_subdirectory(Util)
+add_subdirectory(Frames)
+add_subdirectory(Config)

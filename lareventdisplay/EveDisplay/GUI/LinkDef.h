@@ -10,5 +10,6 @@
 #pragma link C++ namespace eved;
 
 #pragma link C++ class eved::EveNavGui;
+#pragma link C++ class eved::PSetLTFrame;
 
 #endif

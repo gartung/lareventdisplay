@@ -32,14 +32,17 @@ namespace eved {
     // must be supplied by user, called when we want to tell the derived
     // service to update its GUI after processing a new event.  
     virtual void afterNewEvent(art::Event const & ev) = 0;
+    virtual void afterGUIEvent() {} //optional function executed in posEvent just after GUI stops because of a button press
+    virtual void afterBeginJob() {} //optional function executed in postBeginJobWorkers
 
   private:
     void preEvent(art::Event const & ev);
     void postEvent(art::Event const & ev);
-    void postBeginJobWorkers(art::InputSource * is, std::vector<art::Worker *> const &);
+    void postBeginJobWorkers(art::InputSource * is, const std::vector<art::Worker*>& workers);
 
+  protected:
     art::InputSource * input_;
-
+    std::vector<art::Worker*> fWorkers;
   };
 }
 
