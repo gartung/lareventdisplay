@@ -102,6 +102,7 @@ void eved::PSetLTFrame::AddPSet(const fhicl::ParameterSet& pset)
     {
       LOG_ERROR("PSetLTFrame") << "Caught exception \n\n" << e << "\n\nwhile looking for key service_type in AddPSet().  So, the following parameter set "
                                << "will not appear in the PSetLTFrame:\n\n" << pset.to_indented_string() << "\n";
+      return;
       //throw e;
     }
   }
@@ -282,7 +283,12 @@ void eved::PSetLTFrame::SetKey(TGListTreeItem* key, fhicl::ParameterSet& pset, b
                                                                                               //"{}" with the quotation marks into pset.  Then, this key can no 
                                                                                               //longer be cast to fhicl::ParameterSet. std::string::compare()
                                                                                               //returns 0 for equal strings.  
-    else pset.put_or_replace(key->GetText(), *data);
+    else 
+    {
+      //Remove \n from data.
+      for(auto pos = data->find("\n"); pos != std::string::npos; pos = data->find("\n")) data->erase(pos, 2);
+      pset.put_or_replace(key->GetText(), *data);
+    }
   }
 }
 

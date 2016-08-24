@@ -115,8 +115,8 @@ namespace eved
   
     //TPC visualization
     auto& tpc = geom->TPC(fTPCID);
-    const TGeoVolume* vol = tpc.TotalVolume();
-    if(vol == nullptr) 
+    //const TGeoVolume* vol = tpc.TotalVolume();
+    /*if(vol == nullptr) 
     {
       mf::LogWarning("TWQGeoMaker") << "Got bad volume for a TPC.\n";
       //return retVal;
@@ -141,7 +141,7 @@ namespace eved
     shape->SetDrawFrame(kTRUE);
     shape->VizDB_Insert(shape->GetName(), kTRUE, kTRUE);
  
-    //retVal->AddElement(shape);
+    //retVal->AddElement(shape);*/
 
     detinfo::DetectorProperties const* detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
 
@@ -161,9 +161,9 @@ namespace eved
     for(size_t plane = 0; plane < fScenes.size(); ++plane)
     {
       auto scene = fScenes[plane];
-      DestroyRecursive(scene); //TODO: Figure out why we get a different conversion for the first event.  
-      auto projMan = new vutl::TEveUserProjectionManager(new vutl::TEveTWQProjection(geo::PlaneID(fTPCID, plane)));
-      scene->AddElement(projMan->ImportElements(shape)); 
+      DestroyRecursive(scene); 
+      //auto projMan = new vutl::TEveUserProjectionManager(new vutl::TEveTWQProjection(geo::PlaneID(fTPCID, plane)));
+      //scene->AddElement(projMan->ImportElements(shape)); 
 
       //Attempt at implementing simple well-behaved axes.  I am in the process of developing this, so I will probably hardcode a few values for now.  
       //Everything here should eventually come from a fcl parameter set.  
@@ -175,7 +175,8 @@ namespace eved
       double tickLength = 500.; //arbitrary value for testing
       size_t fontSize  = 0.1;
 
-      for(size_t tick = 0; tick < 10; ++tick) //arbitrarily use 100 tick marks for testing
+      //Add tick marks to the y axis
+      for(size_t tick = 0; tick <= 10; ++tick) //arbitrarily use 100 tick marks for testing
       {
         auto line = new TEveLine(2); 
         line->SetNextPoint(0, tick*detprop->NumberTimeSamples()/10., -tickLength/2.);
@@ -189,15 +190,24 @@ namespace eved
         label->SetFontSize(fontSize);
         scene->AddElement(label);
       }
+      
+      //Label the y axis as a whole
+      auto yAxisLabel = new TEveText("T [TDC Ticks]");
+      yAxisLabel->PtrMainTrans()->SetPos(0, detprop->NumberTimeSamples()+20., -500);
+      yAxisLabel->SetMainColorRGB(1.f, 0, 0);
+      yAxisLabel->SetFontSize(fontSize);
+      scene->AddElement(yAxisLabel);
   
+      //Build the z axis
       auto zaxis = new TEveArrow(0, 0, conversion, 0, 0, 0);
       zaxis->SetMainColorRGB(0, 0, 1.f);
       zaxis->SetTubeR(0.001); //why does this arrow seem to be ~10x thicker than the y arrow?  
       zaxis->SetConeR(0.004);
       zaxis->VizDB_Insert("ZAxis", kTRUE, kTRUE);
 
+      //Add tick marks to the z axis
       size_t nWires = tpc.Plane(plane).Nwires();
-      for(size_t tick = 0; tick < 20; ++tick) //arbitrarily use 100 tick marks for testing
+      for(size_t tick = 0; tick <= 20; ++tick) //arbitrarily use 100 tick marks for testing
       {
         auto line = new TEveLine(2);
         line->SetNextPoint(0, -tickLength/2., tick*conversion/20.);
@@ -211,25 +221,18 @@ namespace eved
         label->SetFontSize(fontSize);
         scene->AddElement(label);
       }
+      
+      //Label the z axis as a whole
+      auto zAxisLabel = new TEveText("W [Wire Number]");
+      zAxisLabel->PtrMainTrans()->SetPos(0, -300, conversion+20.);
+      zAxisLabel->SetMainColorRGB(0, 0, 1.f);
+      zAxisLabel->SetFontSize(fontSize);
+      scene->AddElement(zAxisLabel);
 
+      //Hand the axes to the scene for this view
       scene->AddElement(yaxis);
       scene->AddElement(zaxis);  
-
-      //TEveProjectionAxes* axes = new TEveProjectionAxes(projMan);  
-      //Got an error from TClass::New() that we cannot create TEveProjectionAxes!!!  Checked source code, and TEveProjectionAxes has no default constructor!?!  
-      //Is there a reason for this?
-      //axes->VizDB_Insert(axes->GetName(), kTRUE, kTRUE);
-      //scene->AddElement(axes);
-      //Currently, I am getting an error related to drawing TEveProjectionAxes.  I think the axes are looking for negative values in the TWQ view numerically 
-      //and failing to find a value that gives a negative wire/TDC value.  I think the negative values might be coming from the camera frustrum.   
     }
-
-    /*mf::LogWarning("TWQGeoMaker") << "Added TPC named " << vol->GetName() << " to scene " << retVal->GetName() << ".\n";
-
-    mf::LogWarning("TWQGeoMaker") << "Render state of view " << retVal->GetName() << " is " << retVal->GetRnrSelf() << ".  Render children state is " 
-                                     << retVal->GetRnrChildren() << ".\n";*/
-
-    //return retVal;
   }
 }
 #endif //__CINT__
