@@ -71,6 +71,7 @@ simple_plugin( RawConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( RecoTWQConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( TruthTWQConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( TWQGeoConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( TWQ2DRecoConstructor module ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 
 install_headers()
 install_fhicl()

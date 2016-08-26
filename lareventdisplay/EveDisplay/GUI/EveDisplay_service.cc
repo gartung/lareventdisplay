@@ -49,12 +49,20 @@ namespace eved
     else
     {
       fEve = TEveManager::Create(kTRUE, "I"); //we will create viewers and file browser ourselves
+      //In light of the code below, note that we get an Eve list tree widget for "free"
     }
 
-    fNav = new EveNavGui(fEve->GetBrowser());
+    //fNav = new EveNavGui(fEve->GetBrowser());
+    //Control GUI
+    auto eBrowse = fEve->GetBrowser();
+    auto leftTab = eBrowse->GetTabLeft();
+    fNav = new EveNavGui(leftTab);
+    leftTab->AddTab("Control", fNav);
+    leftTab->MapSubwindows(); //TODO: Do we really need to do this for each new tab we add?  
+    leftTab->Resize();
+    leftTab->MapWindow();
     
     //Make our own "custom" file browser that browses the TFileSiervice's histograms.  
-    auto eBrowse = fEve->GetBrowser();
     eBrowse->StartEmbedding(TRootBrowser::kLeft);
     auto fileBrowse = fEve->GetBrowser()->MakeFileBrowser(kTRUE);
     eBrowse->StopEmbedding("TFileService");
@@ -63,9 +71,8 @@ namespace eved
 
     //ParameterSet editor
     //eBrowse->StartEmbedding(TRootBrowser::kLeft);
-    auto leftTab = eBrowse->GetTabLeft();
     fPSetEdit = new PSetLTFrame(leftTab); 
-    leftTab->AddTab("ParameterSets", fPSetEdit);
+    leftTab->AddTab("PSets", fPSetEdit);
     leftTab->MapSubwindows();
     leftTab->Resize();
     leftTab->MapWindow();

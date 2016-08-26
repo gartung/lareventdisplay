@@ -25,6 +25,7 @@ namespace eved
 
     void eved::TrackMaker::reconfigure(const fhicl::ParameterSet& p)
     {
+      //fLineWidth = p.get<double>("LineWidth");
     }
 
     TEveElement* eved::TrackMaker::MakeVis(const recob::Track& track) //implementation of pure virtual function
@@ -72,6 +73,7 @@ namespace eved
                                          //for this.  
       retVal->SetMarkerStyle(1); //fcl parameters?
       retVal->SetMarkerColor(color);
+      //retVal->SetLineWidth(fLineWidth); //TODO: Why do I get a GL Invalid Value error when I set line width to 2?
       
       retVal->SetRnrPoints(kFALSE); //FIXME: Some points cause segmentation faults when rendered.  Not drawing path marks for now to avoid this problem, 
                                     //but we ultimately need to understand it.  

@@ -32,6 +32,7 @@ namespace eved
       short fSigMin; //minimum signal value read from fcl
       short fSigMax; //maximum signal value read from fcl
       short fSigCut; //do not draw time-wire points with signals below this ADC value
+      double fTransp; //Transparency of objects drawn
   };
 }
 

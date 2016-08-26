@@ -63,6 +63,8 @@ set( EVE_SERVICE_LIBS ${PACKAGE} ${EVE_LIBS} )
 simple_plugin( TrackMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( SimPartMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 simple_plugin( RawDigitMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( WireMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
+simple_plugin( HitMaker service ${EVE_SERVICE_LIBS} BASENAME_ONLY )
 
 install_headers()
 install_fhicl()

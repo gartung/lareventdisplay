@@ -8,6 +8,7 @@
 #include "TGTextEntry.h"
 #include "TGButton.h"
 #include "TEveBrowser.h"
+#include "TGFrame.h"
 
 #ifndef EVED_EVENAVGUI
 #define EVED_EVENAVGUI
@@ -23,12 +24,13 @@ namespace eved
   class EveNavGui;
 }
 
-class eved::EveNavGui: public TObject
+class eved::EveNavGui: public TGCompositeFrame
 {
-  RQ_OBJECT("eved::EveNavGui") //needed for ROOT to recognize that this object can interact with GUI buttons
+  //RQ_OBJECT("eved::EveNavGui") //needed for ROOT to recognize that this object can interact with GUI buttons
+  //Above is no longer needed if we are a TGCompositeFrame
   
   public:
-    EveNavGui(TEveBrowser* browse);
+    EveNavGui(TGWindow* parent);
     virtual ~EveNavGui();
 
   public:
@@ -37,6 +39,9 @@ class eved::EveNavGui: public TObject
     void Next();
     void Reload();
     void GoTo();
+
+    //Additional control functions; called by GUI buttons
+    void Print(); //Print entire display window to a graphics file 
 
     void SetRunSubRunEvent(size_t run, size_t subrun, size_t event);
 
@@ -51,13 +56,20 @@ class eved::EveNavGui: public TObject
     TGTextButton* fReload;
     TGTextButton* fGoTo;
 
+    //Control buttons
+    TGTextButton* fPrint;
+
     TGTextEntry*  fEvent;
     TGTextEntry*  fRun;
     TGTextEntry* fSubRun; 
+    
+    TGTextEntry* fPrintFile;
 
     TGLabel* fRunLabel;
     TGLabel* fSubRunLabel;
     TGLabel* fEventLabel;
+
+    TGLabel* fPrintLabel;
 
   ClassDef(EveNavGui, 0); //Needed for ROOT to recognize this class
 };

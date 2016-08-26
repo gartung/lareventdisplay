@@ -57,8 +57,8 @@ namespace vutl
 
       //Code taken from LArSoft Event Display's RecoBaseDrawer
       double tickHit = detprop->ConvertXToTicks(x, plane, tpc, cryo);
-      if(tickHit > detprop->NumberTimeSamples()) tickHit = detprop->NumberTimeSamples(); //Handled elsewhere by a TGLClipBox
-      if(tickHit < 0) tickHit = 0;
+      /*if(tickHit > detprop->NumberTimeSamples()) tickHit = detprop->NumberTimeSamples(); //Handled elsewhere by a TGLClipBox
+      if(tickHit < 0) tickHit = 0;*/
 
       double wireHit = 0.;
       try{
@@ -69,8 +69,8 @@ namespace vutl
       }
 
       const auto& planeGeo = geom->Plane(fPlane);
-      if(wireHit > planeGeo.Nwires()) wireHit = planeGeo.Nwires();
-      if(wireHit < 0) wireHit = 0;
+      /*if(wireHit > planeGeo.Nwires()) wireHit = planeGeo.Nwires();
+      if(wireHit < 0) wireHit = 0;*/
 
       //Convert wire number such that the size of a standard frame divided by the number of planes fits both all time ticks and all wires
       art::ServiceHandle<eved::CoordConfig> coordConfig;
@@ -82,10 +82,10 @@ namespace vutl
       auto height = twqWindow->GetHeight();
       mf::LogWarning("TEveTWQProjection") << "In TEveTWQProjection, width=" << width << " and height=" << height << ".\n";
 
-      const auto conversion = detprop->NumberTimeSamples()*width/height*(tpcGeo.Nplanes()+0.5)/planeGeo.Nwires(); //detprop->NumberTimeSamples()*(coordConfig->GetFrameWidth())/planeGeo.Nwires()/coordConfig->GetFrameHeight()*(tpcGeo.Nplanes()+1);
+      const auto conversion = detprop->NumberTimeSamples()*width/height*(tpcGeo.Nplanes()+0.5)/planeGeo.Nwires(); 
       mf::LogWarning("TEveTWQProjection") << "In TEveTWQProjection, conversion*nWires is " << conversion*planeGeo.Nwires() << ".\n";
 
-      wireHit *= conversion; //detprop->NumberTimeSamples()*(coordConfig->GetFrameWidth())/planeGeo.Nwires()/coordConfig->GetFrameHeight()*(tpcGeo.Nplanes()+1);
+      wireHit *= conversion; 
       
       //Return positions by reference
       z = wireHit;

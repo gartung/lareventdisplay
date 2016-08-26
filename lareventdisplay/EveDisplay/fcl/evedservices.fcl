@@ -13,6 +13,7 @@ trackmaker:
 {
   service_provider: "TrackMaker"
   DataLabel:   "pmtrack"
+  #LineWidth: 2
 }
 
 simpartmaker:
@@ -22,6 +23,7 @@ simpartmaker:
   MinE:        0.1 #in GeV
   PDGsToSkip: [2112] #don't draw pesky neutrons! Set this parameter to [] to draw everything.  Note that anything with PDG code > 10^4 is hard-coded not to 
                      #be drawn because ROOT's PDG database apparently can't handle nuclear fragments (or you get Rootinos and seg faults).  
+  #LineWidth: 2
 }
 
 rawdigitmaker:
@@ -29,8 +31,29 @@ rawdigitmaker:
   service_provider: "RawDigitMaker"
   DataLabel: "daq"
   MinSignal: 5. #0
-  MaxSignal: 50.
+  MaxSignal: 400.
   ADCCut: 5.
+  Transp: 100
+}
+
+wiremaker:
+{
+  service_provider: "WireMaker"
+  DataLabel: "caldata"
+  MinSignal: 5. #0
+  MaxSignal: 400.
+  ADCCut: 5.
+  Transp: 100
+}
+
+hitmaker:
+{
+  service_provider: "HitMaker"
+  DataLabel: "cchit"
+  MinSignal: 5. #0
+  MaxSignal: 400.
+  ADCCut: 5.
+  Transp: 50
 }
 
 tpc3dviewer:
@@ -236,13 +259,13 @@ tpctwqconstructor:
     Viewer0:
     {
       ViewerName: "U Plane"
-      SceneNames: [ "Raw0", "Truth0", "Reco0", "TWQGeo0" ]
+      SceneNames: [ "Raw0", "Truth0", "Reco0", "TWQGeo0", "Reco2D0" ]
     }
   
     Viewer1:
     {
       ViewerName: "V Plane"
-      SceneNames: [ "Raw1", "Truth1", "Reco1", "TWQGeo1" ]
+      SceneNames: [ "Raw1", "Truth1", "Reco1", "TWQGeo1", "Reco2D1" ]
     }
   }
 }
@@ -252,6 +275,15 @@ rawconstructor:
   module_type: "RawConstructor"
 
   Raw:
+  {
+  }
+}
+
+twq2drecoconstructor:
+{
+  module_type: "TWQ2DRecoConstructor"
+  
+  Reco2D:
   {
   }
 }
@@ -274,6 +306,8 @@ std_eved_services:
   TrackMakerInt: @local::trackmaker
   SimPartMakerInt: @local::simpartmaker
   RawDigitMakerInt: @local::rawdigitmaker
+  WireMakerInt: @local::wiremaker
+  HitMakerInt: @local::hitmaker
   GeoConfig: @local::geoconfig
   CoordConfig: @local::coordconfig
 }

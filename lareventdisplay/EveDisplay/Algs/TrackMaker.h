@@ -28,6 +28,8 @@ namespace eved
 
       void reconfigure(fhicl::ParameterSet const & p);
 
+    //private:
+      //double fLineWidth; //Line width of drawn tracks
   };
 }
 

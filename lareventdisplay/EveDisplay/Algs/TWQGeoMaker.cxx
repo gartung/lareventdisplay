@@ -193,7 +193,7 @@ namespace eved
       
       //Label the y axis as a whole
       auto yAxisLabel = new TEveText("T [TDC Ticks]");
-      yAxisLabel->PtrMainTrans()->SetPos(0, detprop->NumberTimeSamples()+20., -500);
+      yAxisLabel->PtrMainTrans()->SetPos(0, detprop->NumberTimeSamples()+20., 500);
       yAxisLabel->SetMainColorRGB(1.f, 0, 0);
       yAxisLabel->SetFontSize(fontSize);
       scene->AddElement(yAxisLabel);
@@ -224,7 +224,7 @@ namespace eved
       
       //Label the z axis as a whole
       auto zAxisLabel = new TEveText("W [Wire Number]");
-      zAxisLabel->PtrMainTrans()->SetPos(0, -300, conversion+20.);
+      zAxisLabel->PtrMainTrans()->SetPos(0, -300, conversion+400.);
       zAxisLabel->SetMainColorRGB(0, 0, 1.f);
       zAxisLabel->SetFontSize(fontSize);
       scene->AddElement(zAxisLabel);

@@ -7,7 +7,6 @@
 #include "lareventdisplay/EveDisplay/Algs/SimpleGeoMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/GenericViewerMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
-#include "lareventdisplay/EveDisplay/Algs/SimPartMakerInt.h"
 #include "lareventdisplay/EveDisplay/Algs/SceneConstructor.h"
 #include "lardata/RecoBase/Track.h"
 #include "SimulationBase/MCParticle.h"

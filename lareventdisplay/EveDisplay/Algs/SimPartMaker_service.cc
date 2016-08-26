@@ -43,6 +43,7 @@ namespace eved
       fMaxR = p.get<double>("MaxR", rMax); //in mm
       fMaxZ = p.get<double>("MaxZ", (zhi-zlo)*10./2.); //in mm; multiply default value by 10 to get mm from geometry service's cm
       fPDGsToSkip = p.get<std::vector<int>>("PDGsToSkip");
+      //fLineWidth = p.get<double>("LineWidth"); 
       //mf::LogWarning("SimPartMaker") << "In reconfigure, MinE is " << fMinE << ", fMaxR is " << fMaxR << ", and fMaxZ is " << fMaxZ << ".\n";
     }
 
@@ -100,6 +101,7 @@ namespace eved
       retVal->SetMarkerColor(evd::Style::ColorFromPDG(track.PdgCode()));
       
       retVal->SetRnrPoints(kFALSE); 
+      //retVal->SetLineWidth(fLineWidth); //TODO: Why do I get a GLInvalidValue error when I use line width=2?
 
       return (TEveElement*)retVal;
     } 

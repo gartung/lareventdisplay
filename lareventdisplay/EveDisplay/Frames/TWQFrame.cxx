@@ -44,6 +44,7 @@
 #include "TObject.h"
 #include "TGLClip.h"
 #include "TGTab.h"
+#include "TGLLightSet.h"
 
 ClassImp(eved::OrthoViewerFrame)
 ClassImp(eved::TWQFrame)
@@ -98,34 +99,33 @@ void eved::OrthoViewerFrame::SetPlane(geo::PlaneID plane)
   art::ServiceHandle<geo::Geometry> geom;
   detinfo::DetectorProperties const* detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
   //const auto& planeGeo = geom->Plane(plane);
-  //const auto& center = geom->GetTPCFrontFaceCenter(plane.TPC, plane.Cryostat);  
-  /*const auto& tpcGeo = geom->TPC(plane);
+  const auto& center = geom->GetTPCFrontFaceCenter(plane.TPC, plane.Cryostat);  
+  const auto& tpcGeo = geom->TPC(plane);
 
-  art::ServiceHandle<eved::EveDisplay> eved;
+  /*art::ServiceHandle<eved::EveDisplay> eved;
   auto twqWindow = eved->getEve()->GetBrowser()->GetTabRight()->GetContainer();
   auto width = twqWindow->GetWidth();
   auto height = twqWindow->GetHeight();*/
 
   double conversion = detprop->NumberTimeSamples()*GetWidth()/GetHeight();
-  TGLBoundingBox box(TGLVertex3(0, 0, 0), TGLVertex3(0, detprop->NumberTimeSamples(), conversion*1.05));
+  TGLBoundingBox box(TGLVertex3(center.X()-tpcGeo.HalfWidth(), 0, 0), TGLVertex3(center.X()+tpcGeo.HalfWidth(), detprop->NumberTimeSamples(), conversion*1.05));
   mf::LogWarning("OrthoViewerFrame") << "Set viewing box between (0, 0, 0) and (0, " << detprop->NumberTimeSamples() << ", " << conversion*1.05 << ")\n";   
   mf::LogWarning("OrthoViewerFrame") << "Width is " << GetWidth() << ".  Height is " << GetHeight() << ".\n";
 
   //Don't draw anything outside of the TPC's TWQ projection
-  /*TGLClipBox* clip = new TGLClipBox();
-  clip->Setup(box);
-  clip->SetMode(TGLClip::kOutside);*/
   
   fViewer->GetGLViewer()->CurrentCamera().Setup(box);
+  fViewer->GetGLViewer()->SetClipAutoUpdate(kFALSE); //This is the key to setting a user-provided clipping box!  Otherwise, something in ROOT has a 
+                                                     //tendency to overwrite my changes.
 
-  //double clipParams[6] = {center.X(), detprop->NumberTimeSamples()/2., conversion/2., 2.*tpcGeo.HalfWidth(), 1.*detprop->NumberTimeSamples(), conversion}; 
   //See TGLClipSet::SetClipState
-  /*fViewer->GetGLViewer()->GetClipSet()->SetClipType(TGLClip::kClipBox);
-  fViewer->GetGLViewer()->GetClipSet()->SetClipState(TGLClip::kClipBox, clipParams); //From the CMS stereo example, 0=no clip, 1=plane clip, 2=box clip
-  fViewer->GetGLViewer()->GetClipSet()->GetCurrentClip()->SetMode(TGLClip::kOutside);*/
-  //fViewer->GetGLViewer()->SetClip(clip);
-  //fViewer->GetGLViewer()->CurrentCamera().RefModelViewMatrix().Scale(TGLVector3(1., 1., (GetHeight()*detprop->NumberTimeSamples())/(GetWidth()*planeGeo.Nwires()))); 
-  //fViewer->GetGLViewer()->CurrentCamera().SetViewport(TGLRect(0, 0, GetWidth(), GetHeight()));
+  fViewer->GetGLViewer()->GetClipSet()->SetClipType(TGLClip::kClipBox);
+  fViewer->GetGLViewer()->GetClipSet()->GetCurrentClip()->Setup(TGLVector3(center.X()-tpcGeo.HalfWidth(), -(detprop->NumberTimeSamples()*0.1), -conversion*0.05), TGLVector3(center.X()+tpcGeo.HalfWidth(), detprop->NumberTimeSamples()*1.05, conversion*1.05)); 
+  fViewer->GetGLViewer()->GetClipSet()->GetCurrentClip()->SetMode(TGLClip::kOutside); 
+
+  //See TGLLightSet
+  //fViewer->GetGLViewer()->GetLightSet()->ToggleLight(TGLLightSet::kLightSpecular); //Makes things much darker.  Details stand out more, but image is 
+  //very dark overall in some cases.  
 }
                                                                                                                                                            
 void eved::OrthoViewerFrame::reconfigure(fhicl::ParameterSet const& p)

@@ -1,6 +1,6 @@
-// \file: RawDigitMaker.h
+// \file: WireMaker.h
 // \author: Andrew Olivier aoliv23@lsu.edu
-// \brief: Runtime-choosable algorithm for visualizaing raw::RawDigit in the EVE-based event display.  Implements RawDigitMakerInt.h. 
+// \brief: Runtime-choosable algorithm for visualizaing recob::Wire in the EVE-based event display.  Implements WireMakerInt.h. 
 
 //Framework includes
 #include "cetlib/exception.h"
@@ -9,8 +9,8 @@
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 
 //LArSoft includes
-#include "lareventdisplay/EveDisplay/Algs/RawDigitMaker.h"
-#include "lareventdisplay/EveDisplay/Algs/RawDigitMakerInt.h"
+#include "lareventdisplay/EveDisplay/Algs/WireMaker.h"
+#include "lareventdisplay/EveDisplay/Algs/WireMakerInt.h"
 #include "lardata/RawData/RawDigit.h"
 #include "lareventdisplay/EventDisplay/Style.h"
 #include "larcore/Geometry/Geometry.h"
@@ -26,15 +26,15 @@
 #include "TGeoNode.h"
 #include "TGTab.h"
 
-#ifndef EVED_RAWDIGITMAKER_SERVICE_CC
-#define EVED_RAWDIGITMAKER_SERVICE_CC
+#ifndef EVED_WIREMAKER_SERVICE_CC
+#define EVED_WIREMAKER_SERVICE_CC
 
 //Note that we will place wires in TWQ space.  So, you will get really weird results if you use these TEveBoxSets with objects placed in the "normal" 
 //LArSoft 3D coordinate system.  
 
 namespace eved
 {
-    void eved::RawDigitMaker::reconfigure(const fhicl::ParameterSet& p)
+    void eved::WireMaker::reconfigure(const fhicl::ParameterSet& p)
     {
       fSigMin = p.get<short>("MinSignal");
       fSigMax = p.get<short>("MaxSignal");
@@ -42,7 +42,7 @@ namespace eved
       fTransp = p.get<double>("Transp");
     }
 
-    TEveElement* eved::RawDigitMaker::MakeVis(const raw::RawDigit& digit) //implementation of pure virtual function
+    TEveElement* eved::WireMaker::MakeVis(const recob::Wire& digit) //implementation of pure virtual function
     {
       art::ServiceHandle<geo::Geometry> geom;
 
@@ -52,11 +52,11 @@ namespace eved
   
       auto wireID = wires[0]; //I think the geometry service would have thrown long before this if we couldn't find any wires at all. 
       auto wire = geom->Wire(wireID);
-      auto wvfrm = digit.ADCs();
+      auto wvfrm = digit.Signal();
 
       std::string name("Channel ");
       name += std::to_string(digit.Channel());
-      std::string title("raw::RawDigit\n"+name+"\nADC size: "+std::to_string(wvfrm.size()));
+      std::string title("recob::Wire\n"+name+"\nADC size: "+std::to_string(wvfrm.size()));
 
       /*auto retVal = new TEveBoxSet(name.c_str(), title.c_str());
       retVal->Reset(TEveBoxSet::kBT_AABoxFixedDim, kFALSE, wvfrm.size());
@@ -81,7 +81,7 @@ namespace eved
       auto height = twqWindow->GetHeight();
 
       double conversion = detprop->NumberTimeSamples()*width/height*(tpc.Nplanes()+0.5)/plane.Nwires(); //detprop->NumberTimeSamples()*(coordConfig->GetFrameWidth())/plane.Nwires()/coordConfig->GetFrameHeight()*(tpc.Nplanes()+1);
-      mf::LogWarning("RawDigitMaker") << "In RawDigitMaker, conversion*nWires is " << conversion*plane.Nwires() << "\n";
+      mf::LogWarning("WireMaker") << "In WireMaker, conversion*nWires is " << conversion*plane.Nwires() << "\n";
 
       auto retVal = new TEveBoxSet(name.c_str(), title.c_str());
       retVal->SetDefHeight(1); //1 TDC tick
@@ -126,6 +126,6 @@ namespace eved
     
 }
 
-DEFINE_ART_SERVICE_INTERFACE_IMPL(eved::RawDigitMaker, eved::VisMakerInt<raw::RawDigit>)
+DEFINE_ART_SERVICE_INTERFACE_IMPL(eved::WireMaker, eved::VisMakerInt<recob::Wire>)
 
 #endif
