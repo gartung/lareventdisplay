@@ -11,25 +11,25 @@
 #include "TVector3.h"
 #include "TLatex.h"
 
-#include "EventDisplayBase/View2D.h"
+#include "nutools/EventDisplayBase/View2D.h"
 #include "lareventdisplay/EventDisplay/eventdisplay.h"
 #include "lareventdisplay/EventDisplay/Style.h"
 #include "lareventdisplay/EventDisplay/AnalysisBaseDrawer.h"
 #include "lareventdisplay/EventDisplay/RecoDrawingOptions.h"
 #include "lareventdisplay/EventDisplay/AnalysisDrawingOptions.h"
-#include "lardata/AnalysisBase/Calorimetry.h"
-#include "lardata/AnalysisBase/ParticleID.h"
-#include "lardata/RecoBase/Track.h"
-#include "lardata/RecoBase/Hit.h"
+#include "lardataobj/AnalysisBase/Calorimetry.h"
+#include "lardataobj/AnalysisBase/ParticleID.h"
+#include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Hit.h"
 #include "lardata/Utilities/AssociationUtil.h"
 #include "lardata/RecoObjects/BezierTrack.h"
 #include "lardata/AnalysisAlg/CalorimetryAlg.h"
 
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art/Framework/Principal/Event.h"
-#include "art/Persistency/Common/Ptr.h"
+#include "canvas/Persistency/Common/Ptr.h"
 #include "art/Framework/Principal/Handle.h" 
-#include "art/Framework/Core/FindMany.h" 
+#include "canvas/Persistency/Common/FindMany.h" 
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 #include <math.h>
@@ -93,30 +93,44 @@ namespace evd{
          
                //Loop over Tracks
                for(size_t trkIter = 0; trkIter<tracklist.size(); ++trkIter){
-		 int color = tracklist[trkIter]->ID()%evd::kNCOLS;
+		 int color = tracklist[trkIter].key()%evd::kNCOLS;
 		 std::vector<const anab::Calorimetry*> calos = fmcal.at(trkIter);
 		 std::vector<const anab::ParticleID*> pids = fmpid.at(trkIter);
 		 if (!calos.size()) continue;
 		 if (calos.size()!=pids.size()) continue;
 		 size_t bestplane = 0;
+                 size_t calopl = 0;
+                 size_t pidpl = 0;
 		 size_t nmaxhits = 0;
 		 for (size_t icalo = 0; icalo < calos.size(); ++icalo){
 		   if (calos[icalo]->dEdx().size() > nmaxhits){
 		     nmaxhits = calos[icalo]->dEdx().size();
-		     bestplane = icalo;
+		     bestplane = calos[icalo]->PlaneID().Plane;
 		   }
 		 }
 		 if (anaOpt->fCaloPlane>=0 and anaOpt->fCaloPlane<int(geom->Nplanes())){
-		   for (size_t i = 0; i<geom->Nplanes(); ++i){
-		     if (int(calos[i]->PlaneID().Plane)==anaOpt->fCaloPlane)
-		       bestplane = i;
-		   }
-		 }
+                   for (size_t icalo = 0; icalo < calos.size(); ++icalo){
+                     if (int(calos[icalo]->PlaneID().Plane)==anaOpt->fCaloPlane&&
+                         calos[icalo]->dEdx().size())
+                       bestplane = calos[icalo]->PlaneID().Plane;
+                   }
+                 }
 
-		 TPolyMarker& pm = view->AddPolyMarker(calos[bestplane]->dEdx().size(),evd::kColor[color],8,0.8);
-		 for(size_t h = 0; h<calos[bestplane]->dEdx().size();++h){
-		   double xvalue = calos[bestplane]->ResidualRange().at(h);
-		   double yvalue = calos[bestplane]->dEdx().at(h);
+                 for (size_t icalo = 0; icalo < calos.size(); ++icalo){
+                   if (calos[icalo]->PlaneID().Plane==bestplane){
+                     calopl = icalo;
+                   }
+                 }
+                 for (size_t ipid = 0; ipid < pids.size(); ++ipid){
+                   if (pids[ipid]->PlaneID().Plane==bestplane){
+                     pidpl = ipid;
+                   }
+                 }
+
+		 TPolyMarker& pm = view->AddPolyMarker(calos[calopl]->dEdx().size(),evd::kColor[color],8,0.8);
+		 for(size_t h = 0; h<calos[calopl]->dEdx().size();++h){
+		   double xvalue = calos[calopl]->ResidualRange().at(h);
+		   double yvalue = calos[calopl]->dEdx().at(h);
 		   pm.SetPoint(h,xvalue,yvalue);
                    
 		   double error = yvalue*(0.04231 + 0.0001783*(yvalue*yvalue));
@@ -131,22 +145,23 @@ namespace evd{
 		 char pion[80];
 		 //char muon[80];
 		 sprintf(trackinfo,"Track #%d: K.E. = %.1f MeV , Range = %.1f cm",
-			 tracklist[trkIter]->ID(),
-			 calos[bestplane]->KineticEnergy(),
-			 calos[bestplane]->Range());
+			 int(tracklist[trkIter].key()),
+			 calos[calopl]->KineticEnergy(),
+			 calos[calopl]->Range());
 		 sprintf(proton,"Proton Chi2 = %.1f, Kaon Chi2 = %.1f", 
-			 pids[bestplane]->Chi2Proton(),
-			 pids[bestplane]->Chi2Kaon());
+			 pids[pidpl]->Chi2Proton(),
+			 pids[pidpl]->Chi2Kaon());
 //		 sprintf(kaon,"Kaon Chi2 = %.1f", 
-//			 pids[bestplane]->Chi2Kaon());
+//			 pids[pidpl]->Chi2Kaon());
 		 sprintf(pion,"Pion Chi2 = %.1f, Muon Chi2 = %.1f", 
-			 pids[bestplane]->Chi2Pion(),
-			 pids[bestplane]->Chi2Muon());
+			 pids[pidpl]->Chi2Pion(),
+			 pids[pidpl]->Chi2Muon());
 //		 sprintf(muon,"Muon Chi2 = %.1f", 
-//			 pids[bestplane]->Chi2Muon());
-		 sprintf(pida,"Plane %d, PIDA = %.1f",
-			 calos[bestplane]->PlaneID().Plane,
-			 pids[bestplane]->PIDA());
+//			 pids[pidpl]->Chi2Muon());
+		 sprintf(pida,"Plane %d, PIDA = %.1f, NHits = %d",
+			 calos[calopl]->PlaneID().Plane,
+			 pids[pidpl]->PIDA(),
+                         int(calos[calopl]->dEdx().size()));
 
 		 double offset = ((double)trkIter)*10.0;
 		 TLatex& track_tex  = view->AddLatex(13.0, (46.0)     - offset,trackinfo);

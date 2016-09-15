@@ -4,25 +4,26 @@
 /// \version $Id: RecoBaseDrawer.h,v 1.3 2010/11/11 22:47:20 p-novaart Exp $
 #ifndef EVD_RECOBASEDRAWER_H
 #define EVD_RECOBASEDRAWER_H
+
 #include <vector>
-#ifdef __CINT__
+
+#include "canvas/Persistency/Common/PtrVector.h"
+#include "canvas/Persistency/Common/FindMany.h"
+#include "art/Framework/Principal/View.h"
+
+#ifdef __ROOTCLING__
 
 namespace art { 
     class Event;
-    class FindMany;
-    class PtrVector;
-    class Ptr;
     class ServiceHandle;
-    class View;
 }
 
 #else
-#include "art/Persistency/Common/PtrVector.h"
-#include "art/Framework/Core/FindMany.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
-#include "art/Framework/Principal/View.h"
 #endif
+
 #include "lareventdisplay/EventDisplay/OrthoProj.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
 
 class TVector3;
 class TH1F;
@@ -39,7 +40,6 @@ namespace recob {
     class PCAxis;
     class PFParticle;
     class EndPoint2D;
-    class SpacePoint;
     class Prong;
     class Track;
     class Shower;
@@ -187,6 +187,10 @@ public:
     void OpFlashOrtho(const art::Event& evt,
 		      evd::OrthoProj_t  proj,
 		      evdb::View2D*     view);
+    void VertexOrtho(const art::PtrVector<recob::Vertex>& vertex,
+				  evd::OrthoProj_t proj,
+				  evdb::View2D* view,
+				  int marker);
     void VertexOrtho(const art::Event& evt,
 		     evd::OrthoProj_t  proj,
 		     evdb::View2D*     view);
@@ -291,7 +295,7 @@ public:
 		           art::View<recob::Shower>& shower);
 
     int GetVertices(const art::Event&              evt,
-		            const std::string&             which,
+		            const art::InputTag&           which,
 		            art::PtrVector<recob::Vertex>& vertex);
 
     int GetSeeds(const art::Event&            evt,

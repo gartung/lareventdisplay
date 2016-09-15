@@ -15,8 +15,8 @@
 
 #include "cetlib/exception.h"
 
-#include "EventDisplayBase/View2D.h"
-#include "EventDisplayBase/EventHolder.h"
+#include "nutools/EventDisplayBase/View2D.h"
+#include "nutools/EventDisplayBase/EventHolder.h"
 #include "lareventdisplay/EventDisplay/RawDrawingOptions.h"
 #include "lareventdisplay/EventDisplay/ColorDrawingOptions.h"
 #include "lareventdisplay/EventDisplay/RawDataDrawer.h"
@@ -25,6 +25,10 @@
 #include "larcore/Geometry/CryostatGeo.h"
 #include "larcore/Geometry/TPCGeo.h"
 #include "larcore/Geometry/PlaneGeo.h"
+
+// C/C++ standard libraries
+#include <algorithm> // std::min(), std::max()
+
 
 namespace evd{
 
@@ -138,15 +142,24 @@ namespace evd{
                                            hend,
                                            hamplitudes,
                                            hpeaktimes);
-
-         if(drawopt->fDrawRawDataOrCalibWires == kRAW)      fRawHisto->Draw();
-         if(drawopt->fDrawRawDataOrCalibWires == kCALIB)    fRecoHisto->Draw();
-         if(drawopt->fDrawRawDataOrCalibWires == kRAWCALIB){
-            fRawHisto->SetMaximum(1.1*TMath::Max(fRawHisto->GetMaximum(), fRecoHisto->GetMaximum()));
-            fRawHisto->SetMinimum(1.1*TMath::Min(fRawHisto->GetMinimum(), fRecoHisto->GetMinimum()));
-            fRawHisto->Draw();
-            fRecoHisto->Draw("same");
-         }
+         
+         // draw with histogram style, only (square) lines, no errors
+         static const std::string defaultDrawOptions = "HIST";
+         
+         switch (drawopt->fDrawRawDataOrCalibWires) {
+           case kRAW:
+             fRawHisto->Draw(defaultDrawOptions.c_str());
+             break;
+           case kCALIB:
+             fRecoHisto->Draw(defaultDrawOptions.c_str());
+             break;
+           case kRAWCALIB:
+             fRawHisto->SetMaximum(1.1*std::max(fRawHisto->GetMaximum(), fRecoHisto->GetMaximum()));
+             fRawHisto->SetMinimum(1.1*std::min(fRawHisto->GetMinimum(), fRecoHisto->GetMinimum()));
+             fRawHisto->Draw(defaultDrawOptions.c_str());
+             fRecoHisto->Draw((defaultDrawOptions + " same").c_str());
+             break;
+         } // switch
 
          // this loop draws Gaussian shapes for identified hits in the reco histo
          for (size_t i = 0; i < hstart.size() && drawopt->fDrawRawDataOrCalibWires != kRAW; ++i) {
@@ -185,10 +198,10 @@ namespace evd{
         plnwir.SetTextColor(kBlack);
         plnwir.Draw("same");
 */
-         if     (drawopt->fDrawRawDataOrCalibWires == kCALIB) fRecoHisto->Draw("same");
+         if     (drawopt->fDrawRawDataOrCalibWires == kCALIB) fRecoHisto->Draw((defaultDrawOptions + " same").c_str());
          else if(drawopt->fDrawRawDataOrCalibWires == kRAWCALIB){
-            fRawHisto->Draw("same");
-            fRecoHisto->Draw("same");
+            fRawHisto->Draw((defaultDrawOptions + " same").c_str());
+            fRecoHisto->Draw((defaultDrawOptions + " same").c_str());
          }
 
          fRawHisto->SetTitleOffset(0.2, "Y");

@@ -19,30 +19,30 @@
 #include "TText.h"
 #include "TColor.h"
 
-#include "EventDisplayBase/View2D.h"
-#include "EventDisplayBase/View3D.h"
-#include "EventDisplayBase/EventHolder.h"
+#include "nutools/EventDisplayBase/View2D.h"
+#include "nutools/EventDisplayBase/View3D.h"
+#include "nutools/EventDisplayBase/EventHolder.h"
 #include "lareventdisplay/EventDisplay/eventdisplay.h"
 #include "lareventdisplay/EventDisplay/RecoBaseDrawer.h"
 #include "lareventdisplay/EventDisplay/RecoDrawingOptions.h"
 #include "lareventdisplay/EventDisplay/ColorDrawingOptions.h"
 #include "lareventdisplay/EventDisplay/RawDrawingOptions.h"
 #include "lareventdisplay/EventDisplay/Style.h"
-#include "lardata/RecoBase/Wire.h"
-#include "lardata/RecoBase/Hit.h"
-#include "lardata/RecoBase/Cluster.h"
-#include "lardata/RecoBase/PCAxis.h"
-#include "lardata/RecoBase/PFParticle.h"
-#include "lardata/RecoBase/SpacePoint.h"
-#include "lardata/RecoBase/Track.h"
-#include "lardata/RecoBase/Shower.h"
-#include "lardata/RecoBase/Event.h"
-#include "lardata/RecoBase/EndPoint2D.h"
-#include "lardata/RecoBase/Seed.h"
+#include "lardataobj/RecoBase/Wire.h"
+#include "lardataobj/RecoBase/Hit.h"
+#include "lardataobj/RecoBase/Cluster.h"
+#include "lardataobj/RecoBase/PCAxis.h"
+#include "lardataobj/RecoBase/PFParticle.h"
+#include "lardataobj/RecoBase/SpacePoint.h"
+#include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Shower.h"
+#include "lardataobj/RecoBase/Event.h"
+#include "lardataobj/RecoBase/EndPoint2D.h"
+#include "lardataobj/RecoBase/Seed.h"
 #include "lardata/RecoObjects/BezierTrack.h"
-#include "lardata/RecoBase/Vertex.h"
-#include "lardata/RecoBase/OpFlash.h"
-#include "lardata/AnalysisBase/CosmicTag.h"
+#include "lardataobj/RecoBase/Vertex.h"
+#include "lardataobj/RecoBase/OpFlash.h"
+#include "lardataobj/AnalysisBase/CosmicTag.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
 #include "larcore/Geometry/Geometry.h"
@@ -56,10 +56,10 @@
 #include "cetlib/exception.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art/Framework/Principal/Event.h"
-#include "art/Persistency/Common/Ptr.h"
-#include "art/Persistency/Common/PtrVector.h"
+#include "canvas/Persistency/Common/Ptr.h"
+#include "canvas/Persistency/Common/PtrVector.h"
 #include "art/Framework/Principal/Handle.h" 
-#include "art/Framework/Core/FindMany.h" 
+#include "canvas/Persistency/Common/FindMany.h" 
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
 namespace {
@@ -149,7 +149,8 @@ void RecoBaseDrawer::Wire2D(const art::Event& evt,
       for(size_t i = 0; i < wires.size(); ++i) {
       
         uint32_t channel = wires[i]->Channel();
-	if (channelStatus.IsBad(channel)) continue;
+          
+	    if (!rawOpt->fSeeBadChannels && channelStatus.IsBad(channel)) continue;
 	
         std::vector<geo::WireID> wireids = geo->ChannelToWire(channel);
       
@@ -1274,7 +1275,7 @@ void RecoBaseDrawer::DrawTrack2D(std::vector<const recob::Hit*>& hits,
                         double z = track.vals().at(t)->End()(2);
                         double tick = 30 + detprop->ConvertXToTicks(x, plane, tpc, cstat);
                         double wire = geo->WireCoordinate(y, z, plane, tpc, cstat);
-                        tid = track.vals().at(t)->ID();
+                        tid = track.vals().at(t)->ID()&65535; //this is a hack for PMA track id which uses the 16th bit to identify shower-like track.;
                         std::string s = std::to_string(tid);
                         char const* txt = s.c_str();
                         TText& trkID = view->AddText(wire, tick, txt);
@@ -1304,7 +1305,7 @@ void RecoBaseDrawer::DrawTrack2D(std::vector<const recob::Hit*>& hits,
                     //                  track.vals().at(t)->VertexDirection(),
                     //                  track.vals().at(t)->ID());
                     const recob::Track* aTrack(track.vals().at(t));
-                    int   color(evd::kColor[(aTrack->ID())%evd::kNCOLS]);
+                    int   color(evd::kColor[(aTrack->ID()&65535)%evd::kNCOLS]);
                     int   lineWidth(1);
                     
                     if(Score>0.1 && recoOpt->fDrawCosmicTags)
@@ -1448,7 +1449,7 @@ void RecoBaseDrawer::DrawTrackVertexAssns2D(const art::Event& evt,
             double tick = 30 + detprop->ConvertXToTicks(x, plane, tpc, cstat);
             double wire = geo->WireCoordinate(y, z, plane, tpc, cstat);
             
-            tid = track->ID();
+            tid = track->ID()&65535;
             
             std::cout << "        --> Drawing Track id: " << tid << std::endl;
             
@@ -1459,14 +1460,14 @@ void RecoBaseDrawer::DrawTrackVertexAssns2D(const art::Event& evt,
             trkID.SetTextColor(color);
             trkID.SetTextSize(0.1);
 	
-            std::vector<const recob::Hit*> hits = fmh.at(track->ID());
+            std::vector<const recob::Hit*> hits = fmh.at(track.key());
             
             float cosmicScore = -999;
             if( cosmicTrackTags.isValid() ){
-                if( cosmicTrackTags.at(track->ID()).size() > 0 ) {
+	      if( cosmicTrackTags.at(track.key()).size() > 0 ) {
                     art::Ptr<anab::CosmicTag> currentTag = cosmicTrackTags.at(track.key()).at(0);
                     cosmicScore = currentTag->CosmicScore();
-                }
+	      }
             }
             
             // only get the hits for the current view
@@ -2041,7 +2042,7 @@ void RecoBaseDrawer::Prong3D(const art::Event& evt,
 
             for(const auto& track : trackVec)
             {
-                int color  = evd::kColor[track->ID()%evd::kNCOLS];
+	        int color  = evd::kColor[track.key()%evd::kNCOLS];
                 int marker = kFullDotMedium;
                 int size   = 2;
                 
@@ -2179,15 +2180,18 @@ void RecoBaseDrawer::DrawTrack3D(const recob::Track& track,
             {
 	            const std::string& which = handle.provenance()->moduleLabel();
 	            art::FindMany<recob::SpacePoint> fmsp(handle, *evt, which);
-
-	            int n = handle->size();
-	            for(int i=0; i<n; ++i)
+                
+                if (fmsp.isValid() && fmsp.size() > 0)
                 {
-	                art::Ptr<recob::Track> p(handle, i);
-                    if(&*p == &track)
+                    int n = handle->size();
+                    for(int i=0; i<n; ++i)
                     {
-	                    std::vector<const recob::SpacePoint*> spts = fmsp.at(i);
-	                    DrawSpacePoint3D(spts, view, color, marker, 1);
+                        art::Ptr<recob::Track> p(handle, i);
+                        if(&*p == &track)
+                        {
+                            std::vector<const recob::SpacePoint*> spts = fmsp.at(i);
+                            DrawSpacePoint3D(spts, view, color, marker, 1);
+                        }
 	                }
                 }
             }
@@ -2474,6 +2478,30 @@ void RecoBaseDrawer::OpFlashOrtho(const art::Event& evt,
   } // Vector of OpFlash labels
 }
 //......................................................................
+void RecoBaseDrawer::VertexOrtho(const art::PtrVector<recob::Vertex>& vertex,
+				  evd::OrthoProj_t proj, evdb::View2D* view, int marker)
+{
+  for(size_t v = 0; v < vertex.size(); ++v){
+      
+    double xyz[3] = {0.};
+    vertex[v]->XYZ(xyz);
+      
+    int color = evd::kColor[vertex[v]->ID()%evd::kNCOLS];
+
+    if(proj == evd::kXY){
+	  TMarker& strt = view->AddMarker(xyz[1], xyz[0], color, marker, 1.0);
+      strt.SetMarkerColor(color);	
+    }
+    else if(proj == evd::kXZ){
+	  TMarker& strt = view->AddMarker(xyz[2], xyz[0], color, marker, 1.0);
+      strt.SetMarkerColor(color);	
+    }
+    else if(proj == evd::kYZ){
+	  TMarker& strt = view->AddMarker(xyz[2], xyz[1], color, marker, 1.0);
+      strt.SetMarkerColor(color);	
+    }
+  }
+}
 void RecoBaseDrawer::VertexOrtho(const art::Event& evt,
 				  evd::OrthoProj_t  proj,
 				  evdb::View2D*     view) {
@@ -2489,27 +2517,13 @@ void RecoBaseDrawer::VertexOrtho(const art::Event& evt,
     
     art::PtrVector<recob::Vertex> vertex;
     this->GetVertices(evt, which, vertex);
+	this->VertexOrtho(vertex, proj, view, 24);
 
-    for(size_t v = 0; v < vertex.size(); ++v){
-      
-      double xyz[3] = {0.};
-      vertex[v]->XYZ(xyz);
-      
-      int color = evd::kColor[vertex[v]->ID()%evd::kNCOLS];
+    this->GetVertices(evt, art::InputTag(which, "kink"), vertex);
+	this->VertexOrtho(vertex, proj, view, 27);
 
-      if(proj == evd::kXY){
-	TMarker& strt = view->AddMarker(xyz[1], xyz[0], color, 24, 1.0);
-        strt.SetMarkerColor(color);	
-      }
-      else if(proj == evd::kXZ){
-	TMarker& strt = view->AddMarker(xyz[2], xyz[0], color, 24, 1.0);
-        strt.SetMarkerColor(color);	
-      }
-      else if(proj == evd::kYZ){
-	TMarker& strt = view->AddMarker(xyz[2], xyz[1], color, 24, 1.0);
-        strt.SetMarkerColor(color);	
-      }
-    }
+    this->GetVertices(evt, art::InputTag(which, "node"), vertex);
+	this->VertexOrtho(vertex, proj, view, 22);
   }
   return;
 }
@@ -2871,7 +2885,7 @@ void RecoBaseDrawer::DrawPFParticleOrtho(const art::Ptr<recob::PFParticle>&     
 
 	for(size_t t = 0; t < track.vals().size(); ++t) {
 	  const recob::Track* ptrack = track.vals().at(t);
-	  int color = ptrack->ID();
+	  int color = ptrack->ID()&65535;
 
 	  // Draw track using only embedded information.
 
@@ -3048,7 +3062,7 @@ void RecoBaseDrawer::DrawPFParticleOrtho(const art::Ptr<recob::PFParticle>&     
       } // p
       // BB: draw the track ID at the end of the track
       if(recoOpt->fDrawTracks > 1) {
-        int tid = track.ID();
+        int tid = track.ID()&65535; //this is a hack for PMA track id which uses the 16th bit to identify shower-like track.
         std::string s = std::to_string(tid);
         char const* txt = s.c_str();
         double x = track.End()(0);
@@ -3395,7 +3409,7 @@ int RecoBaseDrawer::GetPFParticles(const art::Event&                  evt,
 
   //......................................................................
   int RecoBaseDrawer::GetVertices(const art::Event&              evt, 
-				  const std::string&             which,
+				  const art::InputTag&             which,
 				  art::PtrVector<recob::Vertex>& vertex)
   {
     vertex.clear();

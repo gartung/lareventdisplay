@@ -11,13 +11,13 @@
 #include <string>
 #include <vector>
 
-#include "larcore/SimpleTypesAndConstants/geo_types.h" // geo::TPCID
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h" // geo::TPCID
 
 #include "fhiclcpp/ParameterSet.h"
 #include "art/Framework/Services/Registry/ActivityRegistry.h"
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art/Framework/Services/Registry/ServiceMacros.h"
-#include "art/Utilities/InputTag.h"
+#include "canvas/Utilities/InputTag.h"
 
 namespace evd {
   /**
@@ -59,6 +59,7 @@ namespace evd {
     art::InputTag fRawDataLabel;                           ///< module label that made the raw digits, default is daq
     
     bool         fUncompressWithPed;                       ///< Option to uncompress with pedestal. Turned off by default
+    bool         fSeeBadChannels;                          ///< Allow "bad" channels to be viewed
     
     std::vector<float> fRoIthresholds;                     ///< region of interest thresholds, per plane
     
