@@ -77,6 +77,13 @@ namespace eved
     leftTab->Resize();
     leftTab->MapWindow();
     //eBrowse->StopEmbedding("ParameterSets");
+    
+    //Cosmetic changes to default display
+    leftTab->SetTab("Control", kTRUE); //Set the default tab users will see when they open the Eve display to the event control tab.  
+    //auto bottomTab = eBrowse->GetTabBottom();
+    //bottomTab->Resize(bottomTab->GetWidth(), 1); //Set bottom tab to minimum size to maximize detail in the TWQ viewer
+    ((TGWindow*)(eBrowse->GetTabBottom()->GetParent()))->Resize(0, 1);
+    eBrowse->Layout();
 
     fEve->GetBrowser()->SanitizeTabCounts();
 
