@@ -4,9 +4,11 @@
 
 //LArSoft includes
 #ifndef __CINT__
+#ifndef __ROOTCLING__
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcore/Geometry/TPCGeo.h"
+#endif
 #endif
 
 //ROOT includes
@@ -49,17 +51,23 @@ namespace eved
   {
     public:
       #ifndef __CINT__
+      #ifndef __ROOTCLING__
       OrthoViewerFrame(TWQFrame* parent, geo::PlaneID plane, unsigned int width, unsigned int height);
+      #endif
       #endif
       OrthoViewerFrame(TWQFrame* parent, unsigned int width, unsigned int height);
 
       #ifndef __CINT__
+      #ifndef __ROOTCLING__
       void reconfigure(fhicl::ParameterSet const& p);
+      #endif
       #endif
       void RequestScenes();
       void DeleteAnnotations();
       #ifndef __CINT__
+      #ifndef __ROOTCLING__
       void SetPlane(geo::PlaneID plane); //recalculate area to be shown based on new plane
+      #endif
       #endif
 
     private:
@@ -77,7 +85,9 @@ namespace eved
       TWQFrame(const TGWindow* parent);
 
       #ifndef __CINT__
+      #ifndef __ROOTCLING__
       void reconfigure(fhicl::ParameterSet const& p); 
+      #endif
       #endif
       void DeleteAnnotations();
       void RequestScenes();
@@ -96,7 +106,7 @@ namespace eved
       //Eventually, I want to add a histogram that can show a particular wire's waveform.  I have to get wire drawing working first!  
 
     public:
-      ClassDef(TWQFrame, 1);
+      ClassDef(TWQFrame, 0);
   };
 }
 

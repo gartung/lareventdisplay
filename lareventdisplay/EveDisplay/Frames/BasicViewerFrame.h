@@ -4,7 +4,9 @@
 
 //ART includes
 #ifndef __CINT__
+#ifndef __ROOTCLING__
 #include "fhiclcpp/ParameterSet.h"
+#endif
 #endif
 
 //ROOT includes
@@ -26,7 +28,9 @@ namespace eved
       //I don't think we need a destructor since we don't own any resources.  I'd use a smart pointer if I owned resources anyway.   
  
       #ifndef __CINT__
+      #ifndef __ROOTCLING__
       void reconfigure(fhicl::ParameterSet const& p); 
+      #endif
       #endif
       void DeleteAnnotations();
       void RequestScenes();
@@ -36,7 +40,7 @@ namespace eved
       std::vector<std::string> fSceneNames; //Names of TEveScenes we will request when RequestScenes() is called
 
     public:
-      ClassDef(BasicViewerFrame, 1);
+      ClassDef(BasicViewerFrame, 0);
   };
 }
 

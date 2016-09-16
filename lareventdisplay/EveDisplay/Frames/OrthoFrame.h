@@ -4,9 +4,11 @@
 
 //LArSoft includes
 #ifndef __CINT__
+#ifndef __ROOTCLING__
 #include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcore/Geometry/TPCGeo.h"
+#endif
 #endif
 
 //ROOT includes
@@ -41,7 +43,9 @@ namespace eved
       OrthoFrame(const TGWindow* parent);
 
       #ifndef __CINT__
+      #ifndef __ROOTCLING__
       void reconfigure(fhicl::ParameterSet const& p); 
+      #endif
       #endif
       void DeleteAnnotations();
       void RequestScenes();
@@ -56,13 +60,11 @@ namespace eved
       TGLabel* fYLabel;
       TGLabel* fYZLabel;
       TEvePad* fPad;
-      #ifndef __CINT__
       //geo::TPCID fTPCID; //Number of the TPC and cryostat we will draw.  Checked for validity against the geometry service
       //Get this from the GeoConfig service instead
-      #endif
 
     public:
-      ClassDef(OrthoFrame, 1);
+      ClassDef(OrthoFrame, 0);
   };
 }
 

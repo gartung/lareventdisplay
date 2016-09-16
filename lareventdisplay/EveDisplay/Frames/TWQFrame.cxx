@@ -4,9 +4,11 @@
 
 //Framework includes
 #ifndef __CINT__
+#ifndef __ROOTCLING__
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "cetlib/exception.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+#endif
 #endif
 
 //LArSoft includes
