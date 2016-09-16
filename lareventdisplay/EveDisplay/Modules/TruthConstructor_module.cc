@@ -9,7 +9,7 @@
 #include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
 #include "lareventdisplay/EveDisplay/Algs/SimPartMakerInt.h"
 #include "lareventdisplay/EveDisplay/Algs/SceneConstructor.h"
-#include "SimulationBase/MCParticle.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
 
 //Framework includes
 #include "art/Framework/Core/ModuleMacros.h" 

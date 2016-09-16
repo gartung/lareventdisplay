@@ -8,7 +8,7 @@
 #include "art/Framework/Services/Registry/ServiceMacros.h"
 
 //LArSoft includes
-#include "larcore/SimpleTypesAndConstants/geo_types.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
 #ifndef CONFIG_GEOCONFIG_H
 #define CONFIG_GEOCONFIG_H

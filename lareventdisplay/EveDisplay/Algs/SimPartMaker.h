@@ -7,7 +7,7 @@
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/SimPartMakerInt.h"
-#include "SimulationBase/MCParticle.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
 
 //ROOT includes
 #include "TEveTrack.h"

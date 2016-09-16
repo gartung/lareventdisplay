@@ -11,7 +11,7 @@
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/WireMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/WireMakerInt.h"
-#include "lardata/RawData/RawDigit.h"
+#include "lardataobj/RawData/RawDigit.h"
 #include "lareventdisplay/EventDisplay/Style.h"
 #include "larcore/Geometry/Geometry.h"
 #include "lareventdisplay/EveDisplay/Config/CoordConfig.h"

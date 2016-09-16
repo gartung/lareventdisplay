@@ -12,7 +12,7 @@
 
 //LArSoft includes
 #include "larcore/Geometry/Geometry.h"
-#include "larcore/SimpleTypesAndConstants/geo_types.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 #include "lareventdisplay/EveDisplay/Algs/TPCOnlyGeoMaker.h"
 #include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
 

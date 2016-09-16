@@ -5,7 +5,7 @@
 //LArsoft includes
 #include "lareventdisplay/EveDisplay/Config/GeoConfig.h"
 #include "larcore/Geometry/Geometry.h"
-#include "larcore/SimpleTypesAndConstants/geo_types.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
 //Framework includes
 #include "messagefacility/MessageLogger/MessageLogger.h"

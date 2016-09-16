@@ -8,8 +8,8 @@
 #include "lareventdisplay/EveDisplay/Algs/SceneConstructor.h"
 #include "lareventdisplay/EveDisplay/Algs/WireMakerInt.h"
 #include "lareventdisplay/EveDisplay/Algs/HitMakerInt.h"
-#include "lardata/RecoBase/Wire.h"
-#include "lardata/RecoBase/Hit.h"
+#include "lardataobj/RecoBase/Wire.h"
+#include "lardataobj/RecoBase/Hit.h"
 
 //Framework includes
 #include "art/Framework/Core/ModuleMacros.h" 

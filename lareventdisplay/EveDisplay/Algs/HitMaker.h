@@ -7,7 +7,7 @@
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/HitMakerInt.h"
-#include "lardata/RecoBase/Hit.h"
+#include "lardataobj/RecoBase/Hit.h"
 
 //ROOT includes
 #include "TEveElement.h"

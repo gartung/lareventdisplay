@@ -15,12 +15,12 @@
 #include "TGTab.h"
 
 //nutools includes
-#include "EventDisplayBase/NavState.h"
+#include "nutools/EventDisplayBase/NavState.h"
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
 //#include "lareventdisplay/EveDisplay/GUI/EvePSetGui.h"
-#include "EventDisplayBase/RootEnv.h"
+#include "nutools/EventDisplayBase/RootEnv.h"
 #include "lareventdisplay/EveDisplay/GUI/EveNavGui.h"
 #include "lareventdisplay/EveDisplay/GUI/GUINavigatorBase.h"
 
@@ -33,7 +33,7 @@
 #include "art/Framework/Services/Registry/ServiceHandle.h"
 #include "art/Framework/Principal/Worker.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
-#include "art/Persistency/Provenance/ModuleDescription.h"
+#include "canvas/Persistency/Provenance/ModuleDescription.h"
 
 //TODO: Either remove all event dipslay modules when the EVE window is closed (ideal) or force the ART job to finish.  
 

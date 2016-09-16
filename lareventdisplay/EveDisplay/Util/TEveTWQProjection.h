@@ -6,7 +6,7 @@
 #define VUTL_TEVETWQPROJECTION
 
 //LArSoft includes
-#include "larcore/SimpleTypesAndConstants/geo_types.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
 //ROOT includes
 #include "TEveProjections.h"

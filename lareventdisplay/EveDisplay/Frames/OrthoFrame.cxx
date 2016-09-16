@@ -11,7 +11,7 @@
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
 #include "lareventdisplay/EveDisplay/Config/GeoConfig.h"
-#include "larcore/SimpleTypesAndConstants/geo_types.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 #include "lareventdisplay/EveDisplay/Frames/OrthoFrame.h"
 #include "larcore/Geometry/Geometry.h"
 #include "larcore/Geometry/TPCGeo.h"

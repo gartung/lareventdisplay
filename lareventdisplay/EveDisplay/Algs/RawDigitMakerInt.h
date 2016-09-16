@@ -4,7 +4,7 @@
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/VisMakerInt.h"
-#include "lardata/RawData/RawDigit.h"
+#include "lardataobj/RawData/RawDigit.h"
 
 #ifndef EVED_RAWDIGITMAKERINT_H
 #define EVED_RAWDIGITMAKERINT_H

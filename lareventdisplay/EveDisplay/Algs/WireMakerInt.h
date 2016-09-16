@@ -4,7 +4,7 @@
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/VisMakerInt.h"
-#include "lardata/RecoBase/Wire.h"
+#include "lardataobj/RecoBase/Wire.h"
 
 #ifndef EVED_WIREMAKERINT_H
 #define EVED_WIREMAKERINT_H

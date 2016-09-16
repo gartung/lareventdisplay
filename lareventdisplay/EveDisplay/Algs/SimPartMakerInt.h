@@ -4,7 +4,7 @@
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/VisMakerInt.h"
-#include "SimulationBase/MCParticle.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
 
 #ifndef EVED_SIMPARTMAKERINT_H
 #define EVED_SIMPARTMAKERINT_H

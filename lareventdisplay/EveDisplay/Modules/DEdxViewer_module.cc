@@ -5,14 +5,14 @@
 //ART includes
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
-#include "art/Utilities/InputTag.h"
+#include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "art/Framework/Core/ModuleMacros.h"
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/CanvasViewer.h"
-#include "lardata/AnalysisBase/Calorimetry.h"
+#include "lardataobj/AnalysisBase/Calorimetry.h"
 
 //ROOT includes
 #include "TH2D.h"

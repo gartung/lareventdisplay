@@ -11,7 +11,7 @@
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/SimPartMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/SimPartMakerInt.h"
-#include "SimulationBase/MCParticle.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
 #include "lareventdisplay/EventDisplay/Style.h"
 #include "larcore/Geometry/Geometry.h"
 

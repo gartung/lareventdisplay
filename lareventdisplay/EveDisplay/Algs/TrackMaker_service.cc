@@ -9,7 +9,7 @@
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/TrackMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
-#include "lardata/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Track.h"
 
 //ROOT includes
 #include "TEveTrack.h"

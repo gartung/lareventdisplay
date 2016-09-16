@@ -7,7 +7,7 @@
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/WireMakerInt.h"
-#include "lardata/RecoBase/Wire.h"
+#include "lardataobj/RecoBase/Wire.h"
 
 //ROOT includes
 #include "TEveElement.h"

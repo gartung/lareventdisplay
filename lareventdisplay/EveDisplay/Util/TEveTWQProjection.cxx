@@ -11,7 +11,7 @@
 #include "TGTab.h"
 
 //LArSoft includes
-#include "larcore/SimpleTypesAndConstants/geo_types.h" //for geo::PlaneID
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h" //for geo::PlaneID
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
 #include "larcore/Geometry/Geometry.h"
 

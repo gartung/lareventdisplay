@@ -10,14 +10,14 @@
 // LArSoft includes
 #include "lareventdisplay/EveDisplay/GUI/GUINavigatorBase.h"
 #include "lareventdisplay/EveDisplay/GUI/SRNavState.h"
-#include "EventDisplayBase/RootEnv.h"
+#include "nutools/EventDisplayBase/RootEnv.h"
 
 //ART includes
 #include "art/Framework/Principal/Event.h"
-#include "art/Persistency/Provenance/EventID.h"
-#include "art/Persistency/Provenance/Timestamp.h"
-#include "art/Persistency/Provenance/SubRunID.h"
-#include "art/Persistency/Provenance/RunID.h"
+#include "canvas/Persistency/Provenance/EventID.h"
+#include "canvas/Persistency/Provenance/Timestamp.h"
+#include "canvas/Persistency/Provenance/SubRunID.h"
+#include "canvas/Persistency/Provenance/RunID.h"
 #include "art/Framework/Core/InputSource.h"
 #include "fhiclcpp/ParameterSetRegistry.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"

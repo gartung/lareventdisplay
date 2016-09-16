@@ -4,7 +4,7 @@
 
 //LArSoft includes
 #include "lareventdisplay/EveDisplay/Algs/VisMakerInt.h"
-#include "lardata/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Track.h"
 
 #ifndef EVED_TRACKMAKERINT_H
 #define EVED_TRACKMAKERINT_H

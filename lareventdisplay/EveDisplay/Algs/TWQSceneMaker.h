@@ -14,8 +14,8 @@
 #include "lareventdisplay/EveDisplay/GUI/EveDisplay.h"
 #include "larcore/Geometry/Geometry.h"
 #include "lareventdisplay/EveDisplay/Config/GeoConfig.h"
-#include "larcore/SimpleTypesAndConstants/geo_types.h"
-#include "lardata/RecoBase/Cluster.h" //For GetPlane() specialization
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
+#include "lardataobj/RecoBase/Cluster.h" //For GetPlane() specialization
 #include "lareventdisplay/EveDisplay/Algs/DestroyRecursive.h"
 
 //c++ includes

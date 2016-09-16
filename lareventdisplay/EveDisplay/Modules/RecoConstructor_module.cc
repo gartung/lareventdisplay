@@ -8,8 +8,8 @@
 #include "lareventdisplay/EveDisplay/Algs/GenericViewerMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/TrackMakerInt.h"
 #include "lareventdisplay/EveDisplay/Algs/SceneConstructor.h"
-#include "lardata/RecoBase/Track.h"
-#include "SimulationBase/MCParticle.h"
+#include "lardataobj/RecoBase/Track.h"
+#include "nusimdata/SimulationBase/MCParticle.h"
 
 //Framework includes
 #include "art/Framework/Core/ModuleMacros.h" 

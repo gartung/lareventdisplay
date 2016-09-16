@@ -11,7 +11,7 @@
 
 //LArSoft includes
 #include "larcore/Geometry/Geometry.h"
-#include "larcore/SimpleTypesAndConstants/geo_types.h"
+#include "larcoreobj/SimpleTypesAndConstants/geo_types.h"
 
 //c++ includes
 #include <vector>

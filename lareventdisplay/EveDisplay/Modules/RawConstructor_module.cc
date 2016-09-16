@@ -7,7 +7,7 @@
 #include "lareventdisplay/EveDisplay/Algs/GenericViewerMaker.h"
 #include "lareventdisplay/EveDisplay/Algs/SceneConstructor.h"
 #include "lareventdisplay/EveDisplay/Algs/RawDigitMakerInt.h"
-#include "lardata/RawData/RawDigit.h"
+#include "lardataobj/RawData/RawDigit.h"
 
 //Framework includes
 #include "art/Framework/Core/ModuleMacros.h" 
