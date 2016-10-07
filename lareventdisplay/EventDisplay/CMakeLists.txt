@@ -14,10 +14,9 @@ art_make_library(
  			    larsim_Simulation lardataobj_Simulation
 			    lardataobj_RawData
 			    lardataobj_RecoBase
-			    lardata_RecoObjects
+			    lardata_RecoObjects larreco_Deprecated
 			    lardata_Utilities
 			    lardataobj_AnalysisBase
-			    lardata_AnalysisAlg
 		 	    larevt_CalibrationDBI_IOVData
 			    larevt_CalibrationDBI_Providers
 	                    nusimdata_SimulationBase
