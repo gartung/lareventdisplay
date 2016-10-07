@@ -6,7 +6,7 @@ defaultqual	e10
 fcldir		product_dir	job
 #
 product         version
-larsim		v06_03_06
+larreco		v06_06_00
 gcc		v4_9_3a
 
 cetbuildtools	v5_04_03	-	only_for_build
@@ -14,7 +14,7 @@ end_product_list
 
   
 # e10  - with gcc 4.9.3 and -std=c++14
-qualifier	larsim	 	gcc	notes
+qualifier	larreco	 	gcc	notes
 e10:debug	e10:debug	-nq-
 e10:opt		e10:opt		-nq-
 e10:prof	e10:prof	-nq-

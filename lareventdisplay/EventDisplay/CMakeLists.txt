@@ -17,6 +17,7 @@ art_make_library(
 			    lardata_RecoObjects larreco_Deprecated
 			    lardata_Utilities
 			    lardataobj_AnalysisBase
+			    larreco_Calorimetry
 		 	    larevt_CalibrationDBI_IOVData
 			    larevt_CalibrationDBI_Providers
 	                    nusimdata_SimulationBase
