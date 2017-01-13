@@ -9,6 +9,7 @@
 
 #include "canvas/Persistency/Common/PtrVector.h"
 #include "canvas/Persistency/Common/FindMany.h"
+#include "canvas/Persistency/Common/FindManyP.h"
 #include "art/Framework/Principal/View.h"
 
 #ifdef __ROOTCLING__
@@ -289,6 +290,13 @@ public:
     int GetTracks(const art::Event&        evt,
 		          const std::string&       which,
 		          art::View<recob::Track>& track);
+
+    int GetTracksAndHits(const art::Event&        evt,
+			 const std::string&       which,
+			 std::vector< recob::Track const * >& tracks,
+			 std::unique_ptr<art::FindMany<recob::Hit> >& fmh,
+			 std::unique_ptr<art::FindManyP<anab::CosmicTag> >& cosmicTrackTags,
+			 const std::string& whichTag = "");
 
     int GetShowers(const art::Event&        evt,
 		           const std::string&        which,

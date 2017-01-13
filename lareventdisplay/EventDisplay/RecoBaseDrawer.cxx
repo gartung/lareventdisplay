@@ -34,7 +34,7 @@
 #include "lardataobj/RecoBase/PCAxis.h"
 #include "lardataobj/RecoBase/PFParticle.h"
 #include "lardataobj/RecoBase/SpacePoint.h"
-#include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/FittedTrack.h"
 #include "lardataobj/RecoBase/Shower.h"
 #include "lardataobj/RecoBase/Event.h"
 #include "lardataobj/RecoBase/EndPoint2D.h"
@@ -1253,29 +1253,26 @@ void RecoBaseDrawer::DrawTrack2D(std::vector<const recob::Hit*>& hits,
             {
                 std::string const which = recoOpt->fTrackLabels[imod];
                 
-                art::View<recob::Track> track;
-                this->GetTracks(evt, which, track);
-                
-                if(track.vals().size() < 1) continue;
-                
-                art::FindMany<recob::Hit> fmh(track, evt, which);
-                
+		std::vector< recob::Track const * > tracks;
+		std::unique_ptr<art::FindMany<recob::Hit> > fmh;
+		std::unique_ptr<art::FindManyP<anab::CosmicTag> > cosmicTrackTags;
                 std::string const whichTag( recoOpt->fCosmicTagLabels.size() > imod ? recoOpt->fCosmicTagLabels[imod] : "");
-                art::FindManyP<anab::CosmicTag> cosmicTrackTags( track, evt, whichTag );
+                this->GetTracksAndHits(evt, which, tracks, fmh, cosmicTrackTags, whichTag);
+                if(tracks.size() < 1) continue;
                 
                 // loop over the prongs and get the clusters and hits associated with
                 // them.  only keep those that are in this view
-                for(size_t t = 0; t < track.vals().size(); ++t)
+                for(size_t t = 0; t < tracks.size(); ++t)
                 {
                     if(recoOpt->fDrawTracks > 1)
                     {
                         // BB: draw the track ID at the end of the track
-                        double x = track.vals().at(t)->End()(0);
-                        double y = track.vals().at(t)->End()(1);
-                        double z = track.vals().at(t)->End()(2);
+                        double x = tracks.at(t)->End()(0);
+                        double y = tracks.at(t)->End()(1);
+                        double z = tracks.at(t)->End()(2);
                         double tick = 30 + detprop->ConvertXToTicks(x, plane, tpc, cstat);
                         double wire = geo->WireCoordinate(y, z, plane, tpc, cstat);
-                        tid = track.vals().at(t)->ID()&65535; //this is a hack for PMA track id which uses the 16th bit to identify shower-like track.;
+                        tid = tracks.at(t)->ID()&65535; //this is a hack for PMA track id which uses the 16th bit to identify shower-like track.;
                         std::string s = std::to_string(tid);
                         char const* txt = s.c_str();
                         TText& trkID = view->AddText(wire, tick, txt);
@@ -1283,12 +1280,12 @@ void RecoBaseDrawer::DrawTrack2D(std::vector<const recob::Hit*>& hits,
                         trkID.SetTextSize(0.1);
                     }
                     
-                    std::vector<const recob::Hit*> hits = fmh.at(t);
+                    std::vector<const recob::Hit*> hits = fmh->at(t);
                     
                     float Score = -999;
-                    if( cosmicTrackTags.isValid() ){
-                        if( cosmicTrackTags.at(t).size() > 0 ) {
-                            art::Ptr<anab::CosmicTag> currentTag = cosmicTrackTags.at(t).at(0);
+                    if( cosmicTrackTags != 0 && cosmicTrackTags->isValid() ){
+                        if( cosmicTrackTags->at(t).size() > 0 ) {
+                            art::Ptr<anab::CosmicTag> currentTag = cosmicTrackTags->at(t).at(0);
                             Score = currentTag->CosmicScore();
                         }
                     }
@@ -1301,10 +1298,10 @@ void RecoBaseDrawer::DrawTrack2D(std::vector<const recob::Hit*>& hits,
                     }
                     
                     //this->DrawProng2D(hits, view, plane,
-                    //                  track.vals().at(t)->Vertex(),
-                    //                  track.vals().at(t)->VertexDirection(),
-                    //                  track.vals().at(t)->ID());
-                    const recob::Track* aTrack(track.vals().at(t));
+                    //                  tracks.at(t)->Vertex(),
+                    //                  tracks.at(t)->VertexDirection(),
+                    //                  tracks.at(t)->ID());
+                    const recob::Track* aTrack(tracks.at(t));
                     int   color(evd::kColor[(aTrack->ID()&65535)%evd::kNCOLS]);
                     int   lineWidth(1);
                     
@@ -2029,33 +2026,31 @@ void RecoBaseDrawer::Prong3D(const art::Event& evt,
     if(recoOpt->fDrawTracks > 0){
         for(size_t imod = 0; imod < recoOpt->fTrackLabels.size(); ++imod) {
             std::string which = recoOpt->fTrackLabels[imod];
-            art::View<recob::Track> trackView;
-            this->GetTracks(evt, which, trackView);
-            if(!trackView.isValid()) continue; //Prevent potential segmentation fault if no tracks found. aoliv23@lsu.edu
- 
-            art::PtrVector<recob::Track> trackVec;
-            
-            trackView.fill(trackVec);
-            
-            std::string const cosmicTagLabel(recoOpt->fCosmicTagLabels.size() > imod ? recoOpt->fCosmicTagLabels[imod] : "");
-            art::FindMany<anab::CosmicTag> cosmicTagAssnVec(trackVec, evt, cosmicTagLabel);
 
-            for(const auto& track : trackVec)
+	    std::vector< recob::Track const * > trackVec;
+	    std::unique_ptr<art::FindMany<recob::Hit> > fmh;
+	    std::unique_ptr<art::FindManyP<anab::CosmicTag> > cosmicTagAssnVec;
+            std::string const cosmicTagLabel(recoOpt->fCosmicTagLabels.size() > imod ? recoOpt->fCosmicTagLabels[imod] : "");
+	    this->GetTracksAndHits(evt, which, trackVec, fmh, cosmicTagAssnVec, cosmicTagLabel);
+	    if(trackVec.size() < 1) continue;
+
+	    unsigned int itk = 0;
+            for(const auto* track : trackVec)
             {
-	        int color  = evd::kColor[track.key()%evd::kNCOLS];
+	        int color  = evd::kColor[itk%evd::kNCOLS];
                 int marker = kFullDotMedium;
                 int size   = 2;
                 
                 // Check if a CosmicTag object is available
                 
                 // Recover cosmic tag info if any
-                if (cosmicTagAssnVec.isValid())
+                if (cosmicTagAssnVec != 0 && cosmicTagAssnVec->isValid())
                 {
-                    std::vector<const anab::CosmicTag*> tkCosmicTagVec = cosmicTagAssnVec.at(track.key());
+                    auto tkCosmicTagVec = cosmicTagAssnVec->at(itk);
                     
                     if (!tkCosmicTagVec.empty())
                     {
-                        const anab::CosmicTag* cosmicTag = tkCosmicTagVec.front();
+                        const auto cosmicTag = tkCosmicTagVec.front();
                         
                         // If tagged as Cosmic then neutralize the color
                         if (cosmicTag->CosmicScore() > 0.4)
@@ -2070,6 +2065,7 @@ void RecoBaseDrawer::Prong3D(const art::Event& evt,
                 // Draw track using only embedded information.
 
                 DrawTrack3D(*track, view, color, marker, size);
+		itk++;
             }
         }
     }
@@ -2880,11 +2876,13 @@ void RecoBaseDrawer::DrawPFParticleOrtho(const art::Ptr<recob::PFParticle>&     
     if(recoOpt->fDrawTracks != 0){
       for(size_t imod = 0; imod < recoOpt->fTrackLabels.size(); ++imod) {
 	std::string which = recoOpt->fTrackLabels[imod];
-	art::View<recob::Track> track;
-	this->GetTracks(evt, which, track);
+	std::vector< recob::Track const * > tracks;
+	std::unique_ptr<art::FindMany<recob::Hit> > fmh;
+	  std::unique_ptr<art::FindManyP<anab::CosmicTag> > cosmicTrackTags;
+	this->GetTracksAndHits(evt, which, tracks, fmh, cosmicTrackTags, "");
+	if(tracks.size() < 1) continue;
 
-	for(size_t t = 0; t < track.vals().size(); ++t) {
-	  const recob::Track* ptrack = track.vals().at(t);
+	for(const auto* ptrack : tracks) {
 	  int color = ptrack->ID()&65535;
 
 	  // Draw track using only embedded information.
@@ -3392,6 +3390,37 @@ int RecoBaseDrawer::GetPFParticles(const art::Event&                  evt,
     return track.vals().size();
   }
 
+  //......................................................................
+  int RecoBaseDrawer::GetTracksAndHits(const art::Event&        evt,
+				       const std::string&       which,
+				       std::vector< recob::Track const * >& tracks,
+				       std::unique_ptr<art::FindMany<recob::Hit> >& fmh,
+				       std::unique_ptr<art::FindManyP<anab::CosmicTag> >& cosmicTrackTags,
+				       const std::string& whichTag)
+  {
+    try{
+      art::View<recob::Track> track;
+      evt.getView(which,track);
+      tracks.swap(track.vals());
+      fmh = std::unique_ptr<art::FindMany<recob::Hit> >(new art::FindMany<recob::Hit>( track, evt, which ));
+      if (!whichTag.empty()) cosmicTrackTags = std::unique_ptr<art::FindManyP<anab::CosmicTag> >(new art::FindManyP<anab::CosmicTag>( track, evt, whichTag ));
+    }
+    catch(cet::exception& e1){
+      try{
+	art::View<recob::FittedTrack> track;
+	evt.getView(which,track);
+	for (auto tk : track) tracks.push_back(&tk->track());
+	fmh = std::unique_ptr<art::FindMany<recob::Hit> >(new art::FindMany<recob::Hit>( track, evt, which ));
+	if (!whichTag.empty()) cosmicTrackTags = std::unique_ptr<art::FindManyP<anab::CosmicTag> >(new art::FindManyP<anab::CosmicTag>( track, evt, whichTag ));
+      }
+      catch(cet::exception& e2){
+	writeErrMsg("GetTracksAndHits", e1);
+	writeErrMsg("GetTracksAndHits", e2);
+      }
+    }
+    return tracks.size();
+  }
+  
   //......................................................................
   int RecoBaseDrawer::GetShowers(const art::Event&        evt, 
 				const std::string&        which,
