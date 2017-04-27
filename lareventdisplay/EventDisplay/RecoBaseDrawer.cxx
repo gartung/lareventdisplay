@@ -2902,11 +2902,11 @@ void RecoBaseDrawer::DrawPFParticleOrtho(const art::Ptr<recob::PFParticle>&     
         cosmicScore = currentTag->CosmicScore();
     	}
 		}	
-		if(cosmicScore > 0.99 && recoOpt->fDrawCosmicTags == 1){
+		if(cosmicScore > 0.99){
 			// Make all of the cosmics appear red
 			if(recoOpt->fDrawCosmicTags == 1) color = kRed;
 			// Use a value of two to not bother drawing those objects tagged as cosmics
-			if(recoOpt->fDrawCosmicTags == 2) continue;
+			if(recoOpt->fDrawCosmicTags == -1) continue;
 		}
 
 	  // Draw track using only embedded information.
