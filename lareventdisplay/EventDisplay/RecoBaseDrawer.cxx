@@ -2886,9 +2886,28 @@ void RecoBaseDrawer::DrawPFParticleOrtho(const art::Ptr<recob::PFParticle>&     
 	art::View<recob::Track> track;
 	this->GetTracks(evt, which, track);
 
+	// Leigh: Get the cosmic associations.
+	std::string const whichTag( recoOpt->fTrackLabels.size() > imod ? recoOpt->fTrackLabels[imod] : "");
+	art::FindManyP<anab::CosmicTag> cosmicTrackTags( track, evt, whichTag );
+
 	for(size_t t = 0; t < track.vals().size(); ++t) {
 	  const recob::Track* ptrack = track.vals().at(t);
 	  int color = ptrack->ID()&65535;
+
+		// Get the cosmic tagging score (if one exists).
+    float cosmicScore = -999;
+		if( cosmicTrackTags.isValid() ){
+    	if( cosmicTrackTags.at(t).size() > 0 ) {
+        art::Ptr<anab::CosmicTag> currentTag = cosmicTrackTags.at(t).at(0);
+        cosmicScore = currentTag->CosmicScore();
+    	}
+		}	
+		if(cosmicScore > 0.99 && recoOpt->fDrawCosmicTags == 1){
+			// Make all of the cosmics appear red
+			if(recoOpt->fDrawCosmicTags == 1) color = kRed;
+			// Use a value of two to not bother drawing those objects tagged as cosmics
+			if(recoOpt->fDrawCosmicTags == 2) continue;
+		}
 
 	  // Draw track using only embedded information.
 
