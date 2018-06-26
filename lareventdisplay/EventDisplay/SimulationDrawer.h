@@ -36,6 +36,8 @@ namespace evd {
 			  unsigned int      plane);
     void MCTruth3D(const art::Event& evt,
 		   evdb::View3D*     view);
+    void MCParticlesInDetector3D
+      (art::Event const& event, evdb::View3D& view) const;
     void MCTruthOrtho(const art::Event& evt,
 		      evd::OrthoProj_t  proj,
 		      double            msize,
@@ -55,7 +57,7 @@ namespace evd {
 		   std::vector<const simb::MCTruth*>& mctruth);
 
     int GetParticle(const art::Event&                     evt,
-		    std::vector<const simb::MCParticle*>& plist);
+		    std::vector<const simb::MCParticle*>& plist) const;
 
   private:
     std::map<int,bool>       fHighlite;

@@ -42,6 +42,8 @@
 #include "art/Framework/Principal/Event.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 
+#include "range/v3/view/map.hpp" // range::view::keys
+
 namespace {
   // Utility function to make uniform error messages.
   void writeErrMsg(const char* fcn,
@@ -578,6 +580,54 @@ void SimulationDrawer::MCTruth3D(const art::Event& evt,
 }
 
   //......................................................................
+  void SimulationDrawer::MCParticlesInDetector3D
+    (art::Event const& event, evdb::View3D& view) const
+  {
+    if (event.isRealData()) return;
+
+    auto const& drawopt
+      = *(art::ServiceHandle<evd::SimulationDrawingOptions>());
+    
+    // If the option is turned off, there's nothing to do
+    if (!drawopt.fShowMCTruthTrajectories) return;
+
+    //
+    // get the particles to be drawn
+    //
+    
+    std::vector<simb::MCParticle const*> particles;
+    GetParticle(event, particles);
+    mf::LogDebug("SimulationDrawer") << "Drawing the true trajectory of "
+      << particles.size() << " simulated particles";
+    
+    Color_t color = kMagenta;
+    Style_t style = kDashed;
+    Width_t width = 1;
+    Color_t startColor = kViolet;
+    Size_t startSize = 3;
+    Marker_t startStyle = kStar;
+    for (simb::MCParticle const* particle: particles) {
+      simb::MCTrajectory const& trajectory = particle->Trajectory();
+      
+      // add the full trajectory
+      TPolyLine3D& pl = view.AddPolyLine3D(trajectory.size(), color, width, style);
+      unsigned int iPoint = 0U;
+      for (auto const& position: trajectory | ranges::view::keys) {
+        pl.SetPoint(iPoint++, position.X(), position.Y(), position.Z());
+      }
+      
+      // add a point to the creation vertex; evdb::View3D allows only for
+      // polymarkers, not single ones...
+      // add the full trajectory
+      TPolyMarker3D& pm = view.AddPolyMarker3D(1, startColor, startStyle, startSize);
+      auto const& vertex = trajectory.Position(0U);
+      pm.SetPoint(0, vertex.X(), vertex.Y(), vertex.Z());
+      
+    } // for particles
+    
+  } // SimulationDrawer::MCParticlesInDetector()
+
+  //......................................................................
   //this method draws the true particle trajectories in 3D Ortho view.
   void SimulationDrawer::MCTruthOrtho(const art::Event& evt,
 				      evd::OrthoProj_t  proj,
@@ -860,7 +910,7 @@ void SimulationDrawer::MCTruth3D(const art::Event& evt,
 
   //......................................................................
   int SimulationDrawer::GetParticle(const art::Event&                     evt,
-				    std::vector<const simb::MCParticle*>& plist)
+				    std::vector<const simb::MCParticle*>& plist) const
   {
     plist.clear();
 
