@@ -30,7 +30,7 @@ art_make( TOOL_LIBRARIES
             art_Persistency_Common
             art_Persistency_Provenance
             ${ART_FRAMEWORK_SERVICES_BASIC}
-            ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+            ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
             ${ART_FRAMEWORK_SERVICES_OPTIONAL_RANDOMNUMBERGENERATOR_SERVICE}
             ${ART_ROOT_IO_TFILESERVICE_SERVICE}
             ${ART_FRAMEWORK_SERVICES_SYSTEM_FILECATALOGMETADATA_SERVICE}
@@ -43,7 +43,7 @@ art_make( TOOL_LIBRARIES
             ${Boost_FILESYSTEM_LIBRARY}
             ${Boost_SYSTEM_LIBRARY}
             ${CLHEP}
-            ${ROOT_BASIC_LIB_LIST}
+            ${ROOT_LIBRARIES}
             ${ROOT_EVE_LIB_LIST}
             ${ROOT_X3d}
     )

@@ -24,15 +24,14 @@ art_make( TOOL_LIBRARIES
             canvas
             nutools_EventDisplayBase
             ${MF_MESSAGELOGGER}
-
             ${FHICLCPP}
             ${CETLIB}
             ${Boost_FILESYSTEM_LIBRARY}
             ${Boost_SYSTEM_LIBRARY}
-            ${CLHEP}
-            ${ROOT_BASIC_LIB_LIST}
-            ${ROOT_EVE_LIB_LIST}
-            ${ROOT_X3d}
+            ${CLHEP_LIBRARIES}
+            ${ROOT_LIBRARIES}
+            ${ROOT_Eve_LIBRARY}
+            ${ROOT_X3d_LIBRARY}
     )
 
 install_headers()

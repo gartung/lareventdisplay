@@ -43,8 +43,13 @@ art_make_library(
                         ${MF_MESSAGELOGGER}
                         ${FHICLCPP}
                         cetlib cetlib_except
-                        ${ROOT_EVE_LIB_LIST}
-                        ${ROOT_X3d}
+                        ${ROOT_Eve_LIBRARY}
+                        ${ROOT_EG_LIBRARY}
+                        ${ROOT_Geom_LIBRARY}
+                        ${ROOT_Ged_LIBRARY}
+                        ${ROOT_RGL_LIBRARY}
+                        ${ROOT_Gui_LIBRARY}
+                        ${ROOT_X3d_LIBRARY}
                 )
 
 simple_plugin ( GraphCluster module
@@ -54,7 +59,7 @@ simple_plugin ( GraphCluster module
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 art_Utilities
                 canvas
                 ${MF_MESSAGELOGGER}
@@ -69,7 +74,7 @@ simple_plugin ( EVD module
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 art_Utilities
                 canvas
                 ${MF_MESSAGELOGGER}
@@ -86,7 +91,7 @@ simple_plugin ( AnalysisDrawingOptions service
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 ${ART_ROOT_IO_TFILESERVICE_SERVICE}
                 art_Persistency_Common
                 art_Persistency_Provenance
@@ -95,7 +100,7 @@ simple_plugin ( AnalysisDrawingOptions service
                 ${MF_MESSAGELOGGER}
                 ${FHICLCPP}
                 cetlib cetlib_except
-                ${ROOT_BASIC_LIB_LIST}
+                ${ROOT_LIBRARIES}
      )
 
 simple_plugin ( ColorDrawingOptions service
@@ -107,7 +112,7 @@ simple_plugin ( ColorDrawingOptions service
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 ${ART_ROOT_IO_TFILESERVICE_SERVICE}
                 art_Persistency_Common
                 art_Persistency_Provenance
@@ -116,7 +121,7 @@ simple_plugin ( ColorDrawingOptions service
                 ${MF_MESSAGELOGGER}
                 ${FHICLCPP}
                 cetlib cetlib_except
-                ${ROOT_BASIC_LIB_LIST}
+                ${ROOT_LIBRARIES}
      )
 
 simple_plugin ( EvdLayoutOptions service
@@ -128,7 +133,7 @@ simple_plugin ( EvdLayoutOptions service
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 ${ART_ROOT_IO_TFILESERVICE_SERVICE}
                 art_Persistency_Common
                 art_Persistency_Provenance
@@ -137,7 +142,7 @@ simple_plugin ( EvdLayoutOptions service
                 ${MF_MESSAGELOGGER}
                 ${FHICLCPP}
                 cetlib cetlib_except
-                ${ROOT_BASIC_LIB_LIST}
+                ${ROOT_LIBRARIES}
      )
 
 simple_plugin ( InfoTransfer service
@@ -149,7 +154,7 @@ simple_plugin ( InfoTransfer service
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 ${ART_ROOT_IO_TFILESERVICE_SERVICE}
                 art_Persistency_Common
                 art_Persistency_Provenance
@@ -158,7 +163,7 @@ simple_plugin ( InfoTransfer service
                 ${MF_MESSAGELOGGER}
                 ${FHICLCPP}
                 cetlib cetlib_except
-                ${ROOT_BASIC_LIB_LIST}
+                ${ROOT_LIBRARIES}
      )
 
 simple_plugin ( RawDrawingOptions service
@@ -170,7 +175,7 @@ simple_plugin ( RawDrawingOptions service
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 ${ART_ROOT_IO_TFILESERVICE_SERVICE}
                 art_Persistency_Common
                 art_Persistency_Provenance
@@ -179,7 +184,7 @@ simple_plugin ( RawDrawingOptions service
                 ${MF_MESSAGELOGGER}
                 ${FHICLCPP}
                 cetlib cetlib_except
-                ${ROOT_BASIC_LIB_LIST}
+                ${ROOT_LIBRARIES}
      )
 
 simple_plugin ( RecoDrawingOptions service
@@ -191,7 +196,7 @@ simple_plugin ( RecoDrawingOptions service
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 ${ART_ROOT_IO_TFILESERVICE_SERVICE}
                 art_Persistency_Common
                 art_Persistency_Provenance
@@ -200,7 +205,7 @@ simple_plugin ( RecoDrawingOptions service
                 ${MF_MESSAGELOGGER}
                 ${FHICLCPP}
                 cetlib cetlib_except
-                ${ROOT_BASIC_LIB_LIST}
+                ${ROOT_LIBRARIES}
      )
 
 simple_plugin ( SimulationDrawingOptions service
@@ -212,7 +217,7 @@ simple_plugin ( SimulationDrawingOptions service
                 ${ART_FRAMEWORK_PRINCIPAL}
                 ${ART_FRAMEWORK_SERVICES_REGISTRY}
                 ${ART_FRAMEWORK_SERVICES_BASIC}
-                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_CORE}
+                ${ART_ROOT_IO_TFILE_SUPPORT} ${ROOT_Core_LIBRARY}
                 ${ART_ROOT_IO_TFILESERVICE_SERVICE}
                 art_Persistency_Common
                 art_Persistency_Provenance
@@ -221,7 +226,7 @@ simple_plugin ( SimulationDrawingOptions service
                 ${MF_MESSAGELOGGER}
                 ${FHICLCPP}
                 cetlib cetlib_except
-                ${ROOT_BASIC_LIB_LIST}
+                ${ROOT_LIBRARIES}
      )
 
 install_headers()
