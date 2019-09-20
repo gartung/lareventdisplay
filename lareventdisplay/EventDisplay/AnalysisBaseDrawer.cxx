@@ -159,9 +159,8 @@ namespace evd{
 			 calos[calopl]->PlaneID().Plane,
 			 pids[pidpl]->PIDA(),
                          int(calos[calopl]->dEdx().size()));
-
+	 */
 		 double offset = (ntracks - 1)*10.0;
-         */
 		 TLatex& track_tex  = view->AddLatex(13.0, (46.0)     - offset,trackinfo);
 		 TLatex& pida_tex   = view->AddLatex(13.0, (46.0-2.5) - offset,pida);
 		 TLatex& proton_tex = view->AddLatex(13.0, (46.0-5.0) - offset,proton);
