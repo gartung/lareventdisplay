@@ -4,7 +4,7 @@ art_make(
   TOOL_LIBRARIES
     ${ART_FRAMEWORK_PRINCIPAL}
     ${ART_FRAMEWORK_SERVICES_REGISTRY}
-    ${ROOT_CORE}
+    ROOT::Core
     canvas
     lardata_ArtDataHelper
     lardataobj_RawData
@@ -15,5 +15,4 @@ art_make(
 )
 
 install_headers()
-install_source()
 install_fhicl()

@@ -1,0 +1,9 @@
+find_package( ROOT REQUIRED COMPONENTS GenVector Gui Geom Minuit Minuit2 XMLIO Gdml TMVA EG X3d Eve)
+set(HAVE_ROOT6 BOOL:True)
+set(ROOTCLING ROOT::rootcling)
+find_package( larreco REQUIRED )
+
+# use the system zlib
+find_package( ZLIB REQUIRED )
+include_directories( ZLIB_INCLUDE_DIRS )
+

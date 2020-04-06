@@ -5,9 +5,9 @@ art_make(
     ${ART_FRAMEWORK_PRINCIPAL}
     ${ART_FRAMEWORK_SERVICES_REGISTRY}
     ${MF_MESSAGELOGGER}
-    ${ROOT_CORE}
-    ${ROOT_EG}
-    ${ROOT_PHYSICS}
+    ROOT_Core
+    ROOT_EG
+    ROOT_Physics
     canvas
     larcorealg_Geometry
     lareventdisplay_EventDisplay
@@ -19,5 +19,4 @@ art_make(
 )
 
 install_headers()
-install_source()
 install_fhicl()

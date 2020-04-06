@@ -13,21 +13,13 @@
 # ======================================================================
 
 
-# use cmake 3.10 or later
-cmake_minimum_required (VERSION 3.10)
+# use cmake 3.12 or later
+cmake_minimum_required (VERSION 3.12)
 
-project(lareventdisplay)
+project(lareventdisplay VERSION 08.12.03 LANGUAGES CXX)
 
-# cetbuildtools contains our cmake modules
-SET ( CETBUILDTOOLS_VERSION $ENV{CETBUILDTOOLS_VERSION} )
-IF (NOT CETBUILDTOOLS_VERSION)
-    MESSAGE (FATAL_ERROR "ERROR: setup cetbuildtools to get the cmake modules")
-ENDIF()
-
-set(CMAKE_MODULE_PATH $ENV{CANVAS_ROOT_IO_DIR}/Modules
-		      $ENV{CETBUILDTOOLS_DIR}/Modules
-		      ${CMAKE_MODULE_PATH})
-
+set(fcl_dir job)
+find_package( cetmodules REQUIRED )
 include(CetCMakeEnv)
 cet_cmake_env()
 
@@ -40,24 +32,10 @@ cet_set_compiler_flags(DIAGS CAUTIOUS
 cet_report_compiler_flags()
 
 # these are minimum required versions, not the actual product versions
-find_ups_product( larcoreobj )
-find_ups_product( larcorealg )
-find_ups_product( larcore )
-find_ups_product( lardataobj )
-find_ups_product( lardataalg )
-find_ups_product( lardata )
-find_ups_product( larevt )
-find_ups_product( larsim )
-find_ups_product( larreco )
-find_ups_product( eigen )
-find_ups_product( nuevdb )
-find_ups_product( nug4 )
-find_ups_product( nugen )
-find_ups_product( art )
-find_ups_product(art_root_io)
-find_ups_product( cetbuildtools )
-find_ups_product( postgresql )
-
+find_package( ROOT REQUIRED COMPONENTS GenVector Gui Geom Minuit Minuit2 XMLIO Gdml TMVA EG X3d Eve)
+set(HAVE_ROOT6 BOOL:True)
+set(ROOTCLING ROOT::rootcling)
+find_package( larreco REQUIRED )
 # use the system zlib
 find_package( ZLIB REQUIRED )
 include_directories( ZLIB_INCLUDE_DIRS )
@@ -69,9 +47,9 @@ include(BuildPlugins)
 
 # source
 add_subdirectory(lareventdisplay)
-
+add_subdirectory(cmakeConfig)
 # ups - table and config files
-add_subdirectory(ups)
+#add_subdirectory(ups)
 
 # packaging utility
-include(UseCPack)
+#include(UseCPack)
